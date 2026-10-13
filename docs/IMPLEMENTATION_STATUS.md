@@ -12,7 +12,8 @@ Written for: the authors. Last updated: 2026-10-13.
   compiled from source into the overlay (job 27770, 21 minutes). E1/E2 ran with `flash_attention_2` as requested.
 - **E1 and E2 are done for SmolLM2-360M** (no training): see `EXPERIMENT_STATUS.md`.
 - **Multi-GPU training works**: data-parallel with explicit gradient averaging, tested as two real processes on CPU (gloo), and on
-  2x A40 with NCCL (job 27779). The **E3 pilot (50M tokens) is running** on node205 (job 27783); no E3 result exists yet.
+  2x A40 with NCCL (job 27779). The **E3 pilot (50M tokens) finished** (job 27783, node205, 6,236 s): small configurations improved 10x to 50x, but the full model
+  got 5% worse on WikiText-2 (see `EXPERIMENT_STATUS.md`). One run, one seed, untuned lr, no baseline yet.
 - Training data is staged to the node-local NVMe (`/local`) at job start: 2 GB in 6 s, no measurable speedup (training is compute-bound).
 - Not implemented: quantization, the Jetson runtime and measurements, hypervolume-driven configuration weights,
   gradient-conflict measurement, per-configuration low-rank deltas, downstream benchmarks, training at scale.
@@ -114,7 +115,7 @@ function), 27765 (flash_attn import crash), 27767 (flash-attn build compiled ser
 ## Blockers
 
 1. **`HF_TOKEN`** with the Llama 3.2 license accepted, for the first target model.
-2. E3 is running as a 50M-token pilot with untuned hyperparameters (lr 1e-4). The 500M-token main run is not started.
+2. E3 pilot is done with untuned hyperparameters (lr 1e-4); the full-model regression is unresolved and there is no naive-recipe baseline. The 500M-token main run is not started.
 
 ## Revision
 

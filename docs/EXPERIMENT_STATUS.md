@@ -2,8 +2,7 @@
 
 Written for: the authors. Last updated: 2026-10-13.
 
-E0, E1 and E2 are done for SmolLM2-360M. **E3 is running as a 50M-token pilot** (job 27783, 2x A40); two 30-step probes have run, and
-they are probes, not results. E1/E2 are the baseline that joint nested training has to beat.
+E0, E1 and E2 are done for SmolLM2-360M. **The E3 50M-token pilot is done** (job 27783, 2x A40): one run, one seed, untuned lr, no naive-recipe baseline yet. E1/E2 are the baseline that joint nested training has to beat.
 
 ## Experiment matrix
 
@@ -14,7 +13,7 @@ Hardware where run: DAS-6 `node205` (NVIDIA A40) unless stated. The Jetson Orin 
 | E0 | Model facts from the hub | `scripts/check_models.py` | **DONE** (18 of 24 matched; Llama 3.2 and Gemma gated; SmolLM3 unrecognized by transformers 4.51.1) | `results/e0_model_facts_2026-10-13.json` |
 | E1 | Quality per config, no training, original order vs importance-ordered | `scripts/run_e1_e2.py` | **DONE for SmolLM2-360M** (WikiText-2 and C4 validation, bf16, flash attention) | `results/e1e2_smollm2-360m_flash_attention_2.{json,md}` |
 | E2 | Permutation equivalence | same | **DONE for SmolLM2-360M**: max fp32 logit change 5.1e-4 (logits near 30), within tolerance | same |
-| E3 | Joint nested training with distillation vs naive recipe | `configs/experiments/smollm2-360m_nested.yaml`, `NPROC=2 run_experiments.sh train` | **PILOT RUNNING** (50M tokens, job 27783); the 500M-token main run is not started | probes below |
+| E3 | Joint nested training with distillation vs naive recipe | `configs/experiments/smollm2-360m_nested.yaml`, `NPROC=2 run_experiments.sh train` | **PILOT DONE** (50M tokens, job 27783); the 500M-token main run is not started | `results/e3_pilot_smollm2-360m_{eval.json,metrics.jsonl}`, table below |
 | E4 | Ablations: distillation, sandwich, ordering | same, `--set` overrides | NOT STARTED | none |
 | E5 | Llama-3.2-1B, then 3B, Qwen and SmolLM series | `MODEL=... run_experiments.sh` | NOT STARTED; Llama needs `HF_TOKEN` | none |
 | E6 | Monotonicity penalty and configuration weights | `--set train.mono_weight=0.5` | NOT STARTED (penalty implemented; hypervolume weights not) | none |
@@ -95,6 +94,25 @@ These check that the pipeline runs end to end. Learning-rate warm-up was 5 steps
 The small configurations improved by 5x to 10x within 30 steps, and the full model got about 3% worse. Whether that cost disappears with more
 training, or needs the max-config protection the plan describes, is what the pilot and E4 are for.
 
+### E3 pilot result (50M tokens, 1,500 steps, 6,236 s on 2x A40)
+
+Start point is the E1/E2 importance-ordered checkpoint. Perplexity, lower is better. Single run, single seed, lr 1e-4 untuned.
+
+| Config | Active params | WikiText-2, E2 start | WikiText-2, pilot | C4 val, E2 start | C4 val, pilot | FineWeb-Edu val, pilot |
+|---|---|---|---|---|---|---|
+| f025 | 133.8 M | 4,489 | 91.3 | 4,382 | 81.0 | 66.9 |
+| f050 | 212.4 M | 406.5 | 41.1 | 289.9 | 41.4 | 33.2 |
+| f075 | 298.9 M | 45.6 | 21.0 | 45.4 | 24.9 | 19.3 |
+| f100 (full) | 361.8 M | 12.97 | **13.62** | 17.96 | **18.43** | 14.00 |
+
+- The small configurations are now usable: 49x (f025) and 10x (f050) lower WikiText-2 perplexity than before training.
+- **The full model got worse**: +5.0% on WikiText-2 and +2.6% on C4. The 30-step probe showed the same direction, and 50M tokens did not
+  remove it. In the training log the f100 cross-entropy rises from about 2.4 early to 2.55-2.65 at the end, which looks like drift from a
+  learning rate that is too high for the full configuration, not a bug. This is untested.
+- Gaps to the full model on WikiText-2 are still 6.7x (f025), 3.0x (f050), 1.5x (f075).
+- What it does not show: that the recipe beats the naive one (no baseline run), that more tokens fix the regression, or that it holds on
+  another model or seed. Next steps (lower lr or heavier max-config weight sweep, naive baseline, then the 500M main run) are deferred by the authors.
+
 ## DAS-6 job log
 
 | Job | What | Partition | Node | Result |
@@ -114,7 +132,7 @@ training, or needs the max-config protection the plan describes, is what the pil
 | 27780 | tokenize the training corpus (520M + 5M tokens) | fatq | 201 | passed, 1640 s |
 | 27781 | 30-step probe, NFS data | defq | 205 | training ok, 4.11 s/step; final evaluation crashed (flash attention with fp32, fixed) |
 | 27782 | 30-step probe, node-local data | defq | 205 | passed, 4.11 s/step, evaluation ok |
-| 27783 | **E3 pilot, 50M tokens** | defq | 205 (2x A40) | running |
+| 27783 | **E3 pilot, 50M tokens** | defq | 205 (2x A40) | passed, 1,500 steps, 6,236 s |
 | 27784 | CPU tests | fatq | 201 | 245 of 248 passed; 3 test-isolation failures, fixed |
 
 Logs: `/var/scratch/skalra/elastoformer_moo/logs/`. Run directories: `/var/scratch/skalra/elastoformer_moo/runs/`.
