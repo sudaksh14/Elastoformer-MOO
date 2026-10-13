@@ -1,0 +1,19 @@
+\section{Introduction}
+
+Small language models (SLMs) with one to a few billion parameters, such as SmolLM2~\cite{allal2025smollm2}, Qwen2.5~\cite{qwen2025qwen25} and Llama~3.2~\cite{meta2024llama32}, are increasingly run on edge devices for assistants, on-device search, and sensing-driven question answering. These devices face changing budgets: other workloads reduce available memory, latency targets depend on the task, and power or thermal limits change over time. A model fixed at one size is either too heavy for the worst case or wasteful in the best case.
+
+Two common answers have costs. Storing several independently compressed models covers the budgets, but multiplies storage, and switching between them reloads weights, which is slow on devices with shared CPU and GPU memory. Dynamic pruning or early exit keeps one model, but usually changes computation without a fixed set of configurations to plan around.
+
+Elastic networks offer a third option: one set of weights runs at several operating points, and each smaller operating point is a prefix of the larger one. Kalra and Sapra~\cite{kalra2025elastoformer} (hereafter ElastoFormer) proposed this for vision transformers, by pruning a pretrained model and regrowing larger descendants that reuse the smaller ones' weights. Their results show that the largest configuration can match the original model at moderate compression, but that quality drops sharply at aggressive compression: in the published ViT-B results, the smallest configuration at compression ratio 0.8 reaches 51.19\% top-1 against an 81.74\% base~\cite{kalra2025elastoformer}. The ElastoFormer design freezes each smaller stage before training the next, so later stages cannot improve the shared weights.
+
+This paper asks whether the nested idea holds for decoder-only SLMs, and whether it can be made to work on a shared-memory edge device. We make three contributions.
+
+\begin{itemize}
+  \item \textbf{Nested SLM design.} We define nested configurations of a decoder-only language model along the MLP width and the attention key-value groups, with one importance-ordered permutation of the weights so that every configuration is a contiguous prefix. The design keeps head dimension and rotary embeddings unchanged. \TODO{confirm the chosen primary model and its configuration grid}
+  \item \textbf{Joint nested training.} We train all configurations of one shared model together, using sandwich sampling and distillation from the frozen full model, and we measure how this changes quality at each configuration relative to naive slicing and to the frozen-growth recipe of ElastoFormer. \TODO{report measured gains}
+  \item \textbf{Edge measurement and switching.} We measure decode throughput, time to first token, peak memory, and energy per generated token for each configuration on an NVIDIA Jetson Orin Nano 8\,GB~\cite{jetson2024orinnano}. We compare switching cost on shared weights with reloading separately stored models. \TODO{report measured switching cost}
+\end{itemize}
+
+The rest of the paper is organized as follows. Section~\ref{sec:related} places the work among nested networks, compression of language models, and multi-objective training. Section~\ref{sec:design} describes the design and training. Section~\ref{sec:eval} reports quality and edge measurements. Section~\ref{sec:discussion} discusses limitations. Section~\ref{sec:extension} reports a short vision-transformer extension, if space allows, and Section~\ref{sec:conclusion} concludes.
+
+\paragraph{Relation to prior work.} This paper builds on the nested design of Kalra and Sapra~\cite{kalra2025elastoformer}. Their vision-transformer design, its per-level results, and its code are prior work. The language-model setting, the joint training procedure, and the edge measurements are new. Where we reuse the ElastoFormer design, Section~\ref{sec:design} says so explicitly.

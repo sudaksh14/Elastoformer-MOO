@@ -1,0 +1,664 @@
+{
+  "llama3.2-1b": {
+    "hf_id": "meta-llama/Llama-3.2-1B",
+    "expected_model_type": "llama",
+    "error": "OSError: You are trying to access a gated repo.",
+    "license": "llama3.2"
+  },
+  "llama3.2-3b": {
+    "hf_id": "meta-llama/Llama-3.2-3B",
+    "expected_model_type": "llama",
+    "error": "OSError: You are trying to access a gated repo.",
+    "license": "llama3.2"
+  },
+  "tinyllama-1.1b": {
+    "hf_id": "TinyLlama/TinyLlama_v1.1",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 22,
+    "hidden": 2048,
+    "heads": 32,
+    "kv_heads": 4,
+    "head_dim": 64,
+    "intermediate": 5632,
+    "tied_embeddings": false,
+    "vocab": 32000,
+    "grid": [
+      [
+        "f025",
+        1,
+        1536
+      ],
+      [
+        "f050",
+        2,
+        2816
+      ],
+      [
+        "f075",
+        3,
+        4352
+      ],
+      [
+        "f100",
+        4,
+        5632
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "mobilellama-1.4b": {
+    "hf_id": "mtgv/MobileLLaMA-1.4B-Base",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 24,
+    "hidden": 2048,
+    "heads": 16,
+    "kv_heads": 16,
+    "head_dim": 128,
+    "intermediate": 5632,
+    "tied_embeddings": false,
+    "vocab": 32000,
+    "grid": [
+      [
+        "f025",
+        4,
+        1536
+      ],
+      [
+        "f050",
+        8,
+        2816
+      ],
+      [
+        "f075",
+        12,
+        4352
+      ],
+      [
+        "f100",
+        16,
+        5632
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "mobilellama-2.7b": {
+    "hf_id": "mtgv/MobileLLaMA-2.7B-Base",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 32,
+    "hidden": 2560,
+    "heads": 32,
+    "kv_heads": 32,
+    "head_dim": 80,
+    "intermediate": 6912,
+    "tied_embeddings": false,
+    "vocab": 32000,
+    "grid": [
+      [
+        "f025",
+        8,
+        1792
+      ],
+      [
+        "f050",
+        16,
+        3584
+      ],
+      [
+        "f075",
+        24,
+        5120
+      ],
+      [
+        "f100",
+        32,
+        6912
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "open-llama-3b-v2": {
+    "hf_id": "openlm-research/open_llama_3b_v2",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 26,
+    "hidden": 3200,
+    "heads": 32,
+    "kv_heads": 32,
+    "head_dim": 100,
+    "intermediate": 8640,
+    "tied_embeddings": false,
+    "vocab": 32000,
+    "grid": [
+      [
+        "f025",
+        8,
+        2048
+      ],
+      [
+        "f050",
+        16,
+        4352
+      ],
+      [
+        "f075",
+        24,
+        6400
+      ],
+      [
+        "f100",
+        32,
+        8640
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm-135m": {
+    "hf_id": "HuggingFaceTB/SmolLM-135M",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 30,
+    "hidden": 576,
+    "heads": 9,
+    "kv_heads": 3,
+    "head_dim": 64,
+    "intermediate": 1536,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        1,
+        512
+      ],
+      [
+        "f050",
+        2,
+        768
+      ],
+      [
+        "f075",
+        2,
+        1280
+      ],
+      [
+        "f100",
+        3,
+        1536
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm-360m": {
+    "hf_id": "HuggingFaceTB/SmolLM-360M",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 32,
+    "hidden": 960,
+    "heads": 15,
+    "kv_heads": 5,
+    "head_dim": 64,
+    "intermediate": 2560,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        1,
+        768
+      ],
+      [
+        "f050",
+        3,
+        1280
+      ],
+      [
+        "f075",
+        4,
+        2048
+      ],
+      [
+        "f100",
+        5,
+        2560
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm-1.7b": {
+    "hf_id": "HuggingFaceTB/SmolLM-1.7B",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 24,
+    "hidden": 2048,
+    "heads": 32,
+    "kv_heads": 32,
+    "head_dim": 64,
+    "intermediate": 8192,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        8,
+        2048
+      ],
+      [
+        "f050",
+        16,
+        4096
+      ],
+      [
+        "f075",
+        24,
+        6144
+      ],
+      [
+        "f100",
+        32,
+        8192
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm2-135m": {
+    "hf_id": "HuggingFaceTB/SmolLM2-135M",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 30,
+    "hidden": 576,
+    "heads": 9,
+    "kv_heads": 3,
+    "head_dim": 64,
+    "intermediate": 1536,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        1,
+        512
+      ],
+      [
+        "f050",
+        2,
+        768
+      ],
+      [
+        "f075",
+        2,
+        1280
+      ],
+      [
+        "f100",
+        3,
+        1536
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm2-360m": {
+    "hf_id": "HuggingFaceTB/SmolLM2-360M",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 32,
+    "hidden": 960,
+    "heads": 15,
+    "kv_heads": 5,
+    "head_dim": 64,
+    "intermediate": 2560,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        1,
+        768
+      ],
+      [
+        "f050",
+        3,
+        1280
+      ],
+      [
+        "f075",
+        4,
+        2048
+      ],
+      [
+        "f100",
+        5,
+        2560
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "smollm2-1.7b": {
+    "hf_id": "HuggingFaceTB/SmolLM2-1.7B",
+    "expected_model_type": "llama",
+    "model_type": "llama",
+    "supported": true,
+    "layers": 24,
+    "hidden": 2048,
+    "heads": 32,
+    "kv_heads": 32,
+    "head_dim": 64,
+    "intermediate": 8192,
+    "tied_embeddings": true,
+    "vocab": 49152,
+    "grid": [
+      [
+        "f025",
+        8,
+        2048
+      ],
+      [
+        "f050",
+        16,
+        4096
+      ],
+      [
+        "f075",
+        24,
+        6144
+      ],
+      [
+        "f100",
+        32,
+        8192
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "qwen2.5-0.5b": {
+    "hf_id": "Qwen/Qwen2.5-0.5B",
+    "expected_model_type": "qwen2",
+    "model_type": "qwen2",
+    "supported": true,
+    "layers": 24,
+    "hidden": 896,
+    "heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "intermediate": 4864,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        1,
+        1280
+      ],
+      [
+        "f050",
+        1,
+        2560
+      ],
+      [
+        "f075",
+        2,
+        3584
+      ],
+      [
+        "f100",
+        2,
+        4864
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "qwen2.5-1.5b": {
+    "hf_id": "Qwen/Qwen2.5-1.5B",
+    "expected_model_type": "qwen2",
+    "model_type": "qwen2",
+    "supported": true,
+    "layers": 28,
+    "hidden": 1536,
+    "heads": 12,
+    "kv_heads": 2,
+    "head_dim": 128,
+    "intermediate": 8960,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        1,
+        2304
+      ],
+      [
+        "f050",
+        1,
+        4608
+      ],
+      [
+        "f075",
+        2,
+        6656
+      ],
+      [
+        "f100",
+        2,
+        8960
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "qwen2.5-3b": {
+    "hf_id": "Qwen/Qwen2.5-3B",
+    "expected_model_type": "qwen2",
+    "model_type": "qwen2",
+    "supported": true,
+    "layers": 36,
+    "hidden": 2048,
+    "heads": 16,
+    "kv_heads": 2,
+    "head_dim": 128,
+    "intermediate": 11008,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        1,
+        2816
+      ],
+      [
+        "f050",
+        1,
+        5632
+      ],
+      [
+        "f075",
+        2,
+        8192
+      ],
+      [
+        "f100",
+        2,
+        11008
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "other"
+  },
+  "qwen3-0.6b": {
+    "hf_id": "Qwen/Qwen3-0.6B-Base",
+    "expected_model_type": "qwen3",
+    "model_type": "qwen3",
+    "supported": true,
+    "layers": 28,
+    "hidden": 1024,
+    "heads": 16,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "intermediate": 3072,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        2,
+        768
+      ],
+      [
+        "f050",
+        4,
+        1536
+      ],
+      [
+        "f075",
+        6,
+        2304
+      ],
+      [
+        "f100",
+        8,
+        3072
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "qwen3-1.7b": {
+    "hf_id": "Qwen/Qwen3-1.7B-Base",
+    "expected_model_type": "qwen3",
+    "model_type": "qwen3",
+    "supported": true,
+    "layers": 28,
+    "hidden": 2048,
+    "heads": 16,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "intermediate": 6144,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        2,
+        1536
+      ],
+      [
+        "f050",
+        4,
+        3072
+      ],
+      [
+        "f075",
+        6,
+        4608
+      ],
+      [
+        "f100",
+        8,
+        6144
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "qwen3-4b": {
+    "hf_id": "Qwen/Qwen3-4B-Base",
+    "expected_model_type": "qwen3",
+    "model_type": "qwen3",
+    "supported": true,
+    "layers": 36,
+    "hidden": 2560,
+    "heads": 32,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "intermediate": 9728,
+    "tied_embeddings": true,
+    "vocab": 151936,
+    "grid": [
+      [
+        "f025",
+        2,
+        2560
+      ],
+      [
+        "f050",
+        4,
+        4864
+      ],
+      [
+        "f075",
+        6,
+        7424
+      ],
+      [
+        "f100",
+        8,
+        9728
+      ]
+    ],
+    "model_type_matches_registry": true,
+    "license": "apache-2.0"
+  },
+  "gemma-2b": {
+    "hf_id": "google/gemma-2b",
+    "expected_model_type": "gemma",
+    "error": "OSError: You are trying to access a gated repo.",
+    "license": "gemma"
+  },
+  "gemma2-2b": {
+    "hf_id": "google/gemma-2-2b",
+    "expected_model_type": "gemma2",
+    "error": "OSError: You are trying to access a gated repo.",
+    "license": "gemma"
+  },
+  "gemma3-1b": {
+    "hf_id": "google/gemma-3-1b-pt",
+    "expected_model_type": "gemma3",
+    "error": "OSError: You are trying to access a gated repo.",
+    "license": "gemma"
+  },
+  "phi-2": {
+    "hf_id": "microsoft/phi-2",
+    "expected_model_type": "phi",
+    "model_type": "phi",
+    "supported": false,
+    "reason": "model_type='phi' is not supported (non-gated MLP and partial rotary embeddings need a dedicated adapter). Supported: llama, mistral, qwen2, qwen3.",
+    "model_type_matches_registry": true,
+    "license": "mit"
+  },
+  "phi-3-mini": {
+    "hf_id": "microsoft/Phi-3-mini-4k-instruct",
+    "expected_model_type": "phi3",
+    "model_type": "phi3",
+    "supported": false,
+    "reason": "model_type='phi3' is not supported (fused qkv_proj and gate_up_proj tensors need a fused-slicing adapter). Supported: llama, mistral, qwen2, qwen3.",
+    "model_type_matches_registry": true,
+    "license": "mit"
+  },
+  "smollm3-3b": {
+    "hf_id": "HuggingFaceTB/SmolLM3-3B-Base",
+    "expected_model_type": "smollm3",
+    "error": "ValueError: The checkpoint you are trying to load has model type `smollm3` but Transformers does not recognize this architecture. This could be because of an issue with the checkpoint, or because your version of ",
+    "license": "apache-2.0"
+  }
+}

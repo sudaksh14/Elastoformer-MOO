@@ -1,0 +1,27 @@
+# A few-step smoke run for checking the pipeline end to end. Not an experiment.
+model: smollm2-360m
+model_dtype: float32
+out_dir: runs/smoke
+
+elastic:
+  fractions: [0.5, 1.0]
+  mlp_multiple: 256
+
+train:
+  steps: 5
+  lr: 1.0e-5
+  warmup_steps: 1
+  grad_accum: 1
+  teacher: frozen_copy
+  autocast_bf16: false
+  log_every: 1
+
+data:
+  train_tokens: data/train.bin
+  val_tokens:
+    wikitext2: data/wikitext2_test.bin
+    c4: data/c4_val.bin
+    fineweb: data/fineweb_val.bin
+  seq_len: 128
+  batch_size: 2
+  eval_batches: 2

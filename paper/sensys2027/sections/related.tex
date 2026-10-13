@@ -1,0 +1,14 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Nested and elastic networks.}
+Slimmable networks~\cite{yu2019slimmable,yu2019universally} train one set of weights at several width multipliers. Once-for-All~\cite{cai2020ofa} trains a supernet and searches for specialized subnetworks. Matryoshka representations~\cite{kusupati2022matryoshka} nest the embedding dimension, and MatFormer~\cite{devvrit2024matformer} nests the feed-forward width of transformers. Flextron~\cite{cai2024flextron} provides elastic large language models through a search over nested subnetworks. These methods train nested configurations jointly, but most target width or embedding size, and few measure the switching cost of runtime selection on an edge device. ElastoFormer~\cite{kalra2025elastoformer} nests vision transformers by pruning and regrowth, with frozen stages. \TODO{add a comparison table once the nested-LLM literature search is complete}
+
+\paragraph{Compression of language models.}
+LLM-Pruner~\cite{ma2023llmpruner}, SliceGPT~\cite{ashkboos2024slicegpt} and ShortGPT~\cite{men2024shortgpt} remove structure from a pretrained model in one shot, producing one compressed model per budget. Wanda~\cite{sun2024wanda} and SparseGPT~\cite{frantar2023sparsegpt} prune weights without retraining, and GPTQ~\cite{frantar2023gptq} and AWQ~\cite{lin2024awq} quantize them. Each produces an independent model. Our configurations are nested, so one set of weights serves all budgets. Quantization is treated as a separate axis, and the combination is evaluated in Section~\ref{sec:design}.
+
+\paragraph{Multi-objective training.}
+Gradient-based multi-objective methods~\cite{sener2018mtl,yu2020pcgrad,liu2021cagrad,chen2025gradmoo,peitz2024moodl} balance conflicting objectives during training. Pareto-set learning methods such as COSMOS~\cite{ruchte2021cosmos} learn one network for many trade-offs. Recent work applies multi-objective formulations to pruning~\cite{chen2025mosp,afriat2026moonshot,ali2026structmoo}, but these produce independent pruned models rather than nested ones. The thesis of Chen~\cite{chen2026thesis} covers the broader toolbox. \TODO{confirm which multi-objective components are used in the submitted results; shorten this paragraph if none}
+
+\paragraph{Early exit.}
+LayerSkip~\cite{elhoushi2024layerskip} and related early-exit methods change depth at inference time. Our configurations change width; depth elasticity is left for future work.

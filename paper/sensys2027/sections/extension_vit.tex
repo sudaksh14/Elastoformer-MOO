@@ -1,0 +1,6 @@
+\section{Extension: Vision Transformers}
+\label{sec:extension}
+
+\TODO{Include this section only if space remains after the language-model results; otherwise delete it and the matching \texttt{\textbackslash input} in main.tex.}
+
+The same nested evaluation protocol can be applied to the vision transformers released by Kalra and Sapra~\cite{kalra2025elastoformer}, without any training. We evaluate the released per-level checkpoints for their per-configuration top-1 accuracy, their weight sharing, and their switching behaviour, using the protocol of Section~\ref{sec:eval}. \TODO{report the per-level accuracies and whether each level can be recovered from the largest one}. No vision model is trained in this work. The result is reported as a compatibility check: the evaluation and switching measurements apply to vision transformers as well as to language models.

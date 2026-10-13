@@ -1,0 +1,28 @@
+\section{Design}
+\label{sec:design}
+
+\subsection{Elastic dimensions}
+
+A configuration keeps a prefix of two structures in every transformer block: the MLP intermediate channels and the attention key-value groups. For a gated (SwiGLU) MLP, the prefix covers the gate and up projections and the matching columns of the down projection. For attention, a prefix of key-value groups keeps each kept key and value head together with its query heads. Head dimension, rotary position embeddings, and normalization are unchanged, so a configuration differs from the full model only in how many groups and channels it uses. \TODO{confirm the model's attention layout (query heads per KV group) and the configuration grid}
+
+Widths are multiples of 256 channels, so that prefixes align with quantization blocks. Residual width, token embeddings, and output head are shared by all configurations and are not elastic in this version. Layer depth is not elastic.
+
+\subsection{Importance ordering}
+
+We rank MLP channels and key-value groups by activation-aware importance on a calibration set, and permute the stored weights once so that each configuration is a prefix. The permutation is applied consistently to the gate, up and down projections and to the query, key, value and output projections that share a group. Before any training, we check that the permuted full model produces the same logits as the original, up to numerical tolerance. This ordering step reuses the importance-first idea of ElastoFormer~\cite{kalra2025elastoformer}, applied to language models and done once rather than per pruning round.
+
+\subsection{Joint nested training}
+
+ElastoFormer trains each stage after freezing the previous one. We train all configurations of the shared model in the same run. Each step samples the largest configuration, the smallest configuration, and one or two intermediate configurations (sandwich sampling). The loss for each sampled configuration is next-token cross-entropy, plus a distillation term that matches its token distribution to the frozen full model. Gradients from all sampled configurations update the shared weights in the same step. No shared parameter is frozen. \TODO{report distillation temperature, loss weights and the number of training tokens}
+
+\subsection{Monotonicity penalty and configuration weights}
+
+Two optional terms are evaluated as ablations. A monotonicity penalty discourages a larger configuration from having higher loss than a smaller one it contains. Per-configuration loss weights can be set by hand or tuned to improve the hypervolume of measured cost and loss. \TODO{report which terms are used in the main results; remove this subsection if neither is used}
+
+\subsection{Quantization}
+
+Quantization is a separate axis. We quantize each configuration's weights with post-training quantization at 8 and 4 bits, and measure quality and device cost for each. Joint quantization-aware training is evaluated only if the post-training results leave a gap. \TODO{report the quantization format and its results}
+
+\subsection{Runtime selection}
+
+On the device, a controller picks one configuration from a table of measured latency, peak memory and energy per token. The rule is the largest configuration that meets the memory and latency budget. Switching selects a different prefix of the resident weights, without loading a second model file. \TODO{describe the runtime path: a patched llama.cpp~\cite{ggerganov2023llamacpp} build with GGUF-based views, or PyTorch, and whether switching copies any tensor}

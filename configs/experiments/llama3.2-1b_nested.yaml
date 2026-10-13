@@ -1,0 +1,43 @@
+# Joint nested training of Llama-3.2-1B: first target model.
+#
+# Hyperparameters are initial, untuned values chosen for a first run, not results of any search.
+# Write floats with a dot (2.0e-5): PyYAML reads `2e-5` as a string and TrainConfig rejects it.
+#
+# run_experiments.sh overrides model, out_dir, data.train_tokens, data.val_tokens and resume.
+model: llama3.2-1b          # registry name; run_experiments.sh points this at the permuted checkpoint
+model_dtype: float32        # fp32 master weights; bf16 autocast is enabled below
+out_dir: runs/llama3.2-1b_nested
+
+elastic:
+  fractions: [0.25, 0.5, 0.75, 1.0]
+  mlp_multiple: 256
+  min_kv_groups: 1
+
+train:
+  steps: 2000
+  lr: 2.0e-5
+  min_lr_ratio: 0.1
+  warmup_steps: 100
+  weight_decay: 0.0
+  grad_clip: 1.0
+  grad_accum: 8
+  ce_weight: 1.0
+  kd_weight: 1.0
+  temperature: 1.0
+  mono_weight: 0.0          # ablation: 0.5
+  n_random: 1
+  teacher: frozen_copy
+  autocast_bf16: true
+  seed: 0
+  log_every: 10
+  save_every: 200
+
+data:
+  train_tokens: data/train.bin
+  val_tokens:
+    wikitext2: data/wikitext2_test.bin
+    c4: data/c4_val.bin
+    fineweb: data/fineweb_val.bin
+  seq_len: 1024
+  batch_size: 2
+  eval_batches: 32

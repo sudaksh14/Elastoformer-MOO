@@ -1,0 +1,102 @@
+
+===== 1. identity =====
+Tue Oct 13 11:27:22 CEST 2026
+fs2
+skalra
+HOME=/home/skalra
+
+===== 2. storage =====
+drwx------ 20 skalra skalra 4096 Oct 13 11:20 /home/skalra
+drwxr-xr-x 14 skalra skalra  261 Oct  9 19:51 /var/scratch/skalra
+Filesystem                            Size  Used Avail Use% Mounted on
+/dev/mapper/cl_fs4--das6-home         5.0T  189G  4.9T   4% /home
+/dev/mapper/cl_fs4--das6-var_scratch  198T   72T  127T  37% /var/scratch
+Disk quotas for user skalra (uid 5682): 
+     Filesystem   space   quota   limit   grace   files   quota   limit   grace
+/dev/mapper/cl_fs4--das6-home
+                  2658M   4096M   5120M           10623       0       0        
+/dev/mapper/cl_fs4--das6-var_scratch
+writable scratch: yes
+
+===== 3. python environments (conda and venv) =====
+/var/scratch/skalra/minimonda3/bin/conda
+
+# conda environments:
+#
+flexllava-refs         /var/scratch/skalra/envs/flexllava-refs
+matryoshka-mm          /var/scratch/skalra/envs/matryoshka-mm
+texcompile             /var/scratch/skalra/envs/texcompile
+base                 * /var/scratch/skalra/minimonda3
+                       /var/scratch/skalra/prune_llm
+
+/var/scratch/skalra/minimonda3/bin/python3
+Python 3.13.5
+-- venv candidates (pyvenv.cfg within 4 levels of $HOME and /var/scratch/skalra)
+-- directories named prune_llm or matryoshka_mm
+/var/scratch/skalra/prune_llm
+-- probing prune_llm
+found: /var/scratch/skalra/prune_llm/bin/python
+python 3.10.18
+  torch 2.7.0+cu126
+  transformers 4.28.0
+  tokenizers 0.13.3
+  safetensors 0.6.2
+  numpy 2.1.3
+  scipy 1.15.3
+  yaml 6.0.2
+  pytest MISSING
+  datasets MISSING
+  accelerate MISSING
+  peft MISSING
+  lm_eval MISSING
+  bitsandbytes MISSING
+  cuda_available False torch_cuda 12.6
+-- probing matryoshka_mm
+NOT FOUND as venv or conda env
+
+===== 4. slurm configuration =====
+/usr/bin/sbatch
+/usr/bin/sinfo
+/usr/bin/squeue
+PARTITION AVAIL TIMELIMIT NODES NODELIST GRES AVAIL_FEATURES
+fatq up infinite 4 node[201-204] (null) fatnode,cpunode
+defq* up infinite 1 node206 gpu:A40:1 gpunode,A40
+defq* up infinite 1 node205 gpu:A40:2 gpunode,A40
+defq* up infinite 1 node207 gpu:A10:1 gpunode,A10
+defq* up infinite 1 node208 gpu:A10:2 gpunode,A10
+-- per node (name partition gres cpus mem state)
+NODELIST PARTITION GRES CPUS MEMORY STATE
+node201 fatq (null) 64 1 idle
+node202 fatq (null) 64 1 idle
+node203 fatq (null) 64 1 idle
+node204 fatq (null) 64 1 down*
+node205 defq* gpu:A40:2 64 1 idle
+node206 defq* gpu:A40:1 64 1 alloc
+node207 defq* gpu:A10:1 64 1 idle
+node208 defq* gpu:A10:2 64 1 idle
+AccountingStorageType   = accounting_storage/none
+ClusterName             = das6
+SelectType              = select/cons_tres
+SelectTypeParameters    = CR_CORE
+You are not running a supported accounting_storage plugin
+Only 'accounting_storage/slurmdbd' is supported.
+
+===== 5. the nodes the policy cares about =====
+NodeName=node201 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=(null)    RealMemory=1 AllocMem=0 FreeMem=125547 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A 
+NodeName=node202 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=(null)    RealMemory=1 AllocMem=0 FreeMem=125574 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A 
+NodeName=node203 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=(null)    RealMemory=1 AllocMem=0 FreeMem=125563 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A 
+NodeName=node204 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=N/A    Gres=(null)    RealMemory=1 AllocMem=0 FreeMem=N/A Sockets=2 Boards=1    State=DOWN* ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A 
+NodeName=node205 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=gpu:A40:2    RealMemory=1 AllocMem=0 FreeMem=125870 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=5 Owner=N/A MCS_label=N/A 
+NodeName=node206 Arch=x86_64 CoresPerSocket=16     CPUAlloc=64 CPUTot=64 CPULoad=0.00    Gres=gpu:A40:1    RealMemory=1 AllocMem=0 FreeMem=124826 Sockets=2 Boards=1    State=ALLOCATED ThreadsPerCore=2 TmpDisk=0 Weight=4 Owner=N/A MCS_label=N/A 
+NodeName=node207 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=gpu:A10:1    RealMemory=1 AllocMem=0 FreeMem=125869 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=2 Owner=N/A MCS_label=N/A 
+NodeName=node208 Arch=x86_64 CoresPerSocket=16     CPUAlloc=0 CPUTot=64 CPULoad=0.00    Gres=gpu:A10:2    RealMemory=1 AllocMem=0 FreeMem=125855 Sockets=2 Boards=1    State=IDLE ThreadsPerCore=2 TmpDisk=0 Weight=3 Owner=N/A MCS_label=N/A 
+
+===== 6. optional GPU placement check (RUN_SRUN=1 to enable) =====
+skipped; rerun with RUN_SRUN=1 to submit a 2-minute job on node205
+
+===== 7. network and model access =====
+https://huggingface.co -> 200
+https://pypi.org -> 200
+HF_TOKEN set: no
+
+done

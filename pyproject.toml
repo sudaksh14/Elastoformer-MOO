@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elastoformer-moo"
+version = "0.1.0"
+description = "Nested shared-weight elastic inference for decoder-only small language models"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.4",
+    "transformers>=4.51",
+    "numpy",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+data = ["datasets"]
+eval = ["lm-eval"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["gpu: needs a CUDA device; run on DAS-6 nodes 205-208 through run_gpu_tests.sh"]

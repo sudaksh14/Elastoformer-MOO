@@ -1,0 +1,171 @@
+# Small language models considered for nested elastic inference.
+#
+# `verified: true` means scripts/check_models.py fetched the model's config.json from the Hugging Face
+# hub and its model_type matched this file (results/e0_model_facts_2026-10-13.json). Gated models and
+# architectures the installed transformers cannot load stay `verified: false`.
+# Re-run `python scripts/check_models.py` to refresh. Models whose
+# `model_type` is not in elastoformer_moo.arch.SUPPORTED_MODEL_TYPES are listed so the gap is
+# explicit; they are rejected with a clear error until an adapter exists.
+models:
+  # --- Llama architecture ---------------------------------------------------
+  llama3.2-1b:
+    hf_id: meta-llama/Llama-3.2-1B
+    model_type: llama
+    family: llama3
+    gated: true          # needs accepted license and HF_TOKEN
+    notes: First target model.
+    license: llama3.2   # from the Hugging Face model card, 2026-10-13
+    verified: false
+  llama3.2-3b:
+    hf_id: meta-llama/Llama-3.2-3B
+    model_type: llama
+    family: llama3
+    gated: true
+    notes: Second scale-up target; needs more than one A40 for full-parameter training.
+    license: llama3.2   # from the Hugging Face model card, 2026-10-13
+    verified: false
+  tinyllama-1.1b:
+    hf_id: TinyLlama/TinyLlama_v1.1
+    model_type: llama
+    family: tinyllama
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  mobilellama-1.4b:
+    hf_id: mtgv/MobileLLaMA-1.4B-Base
+    model_type: llama
+    family: mobilellama
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  mobilellama-2.7b:
+    hf_id: mtgv/MobileLLaMA-2.7B-Base
+    model_type: llama
+    family: mobilellama
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  open-llama-3b-v2:
+    hf_id: openlm-research/open_llama_3b_v2
+    model_type: llama
+    family: openllama
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm-135m:
+    hf_id: HuggingFaceTB/SmolLM-135M
+    model_type: llama
+    family: smollm
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm-360m:
+    hf_id: HuggingFaceTB/SmolLM-360M
+    model_type: llama
+    family: smollm
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm-1.7b:
+    hf_id: HuggingFaceTB/SmolLM-1.7B
+    model_type: llama
+    family: smollm
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm2-135m:
+    hf_id: HuggingFaceTB/SmolLM2-135M
+    model_type: llama
+    family: smollm2
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm2-360m:
+    hf_id: HuggingFaceTB/SmolLM2-360M
+    model_type: llama
+    family: smollm2
+    notes: Development model.
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm2-1.7b:
+    hf_id: HuggingFaceTB/SmolLM2-1.7B
+    model_type: llama
+    family: smollm2
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  # --- Qwen ----------------------------------------------------------------
+  qwen2.5-0.5b:
+    hf_id: Qwen/Qwen2.5-0.5B
+    model_type: qwen2
+    family: qwen2.5
+    notes: Few KV groups, so attention elasticity is coarse. q/k/v have biases.
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  qwen2.5-1.5b:
+    hf_id: Qwen/Qwen2.5-1.5B
+    model_type: qwen2
+    family: qwen2.5
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  qwen2.5-3b:
+    hf_id: Qwen/Qwen2.5-3B
+    model_type: qwen2
+    family: qwen2.5
+    license: other   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  qwen3-0.6b:
+    hf_id: Qwen/Qwen3-0.6B-Base
+    model_type: qwen3
+    family: qwen3
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  qwen3-1.7b:
+    hf_id: Qwen/Qwen3-1.7B-Base
+    model_type: qwen3
+    family: qwen3
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  qwen3-4b:
+    hf_id: Qwen/Qwen3-4B-Base
+    model_type: qwen3
+    family: qwen3
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  # --- Not yet supported ---------------------------------------------------
+  gemma-2b:
+    hf_id: google/gemma-2b
+    model_type: gemma
+    family: gemma
+    gated: true
+    notes: Unsupported; needs an adapter.
+    license: gemma   # from the Hugging Face model card, 2026-10-13
+    verified: false
+  gemma2-2b:
+    hf_id: google/gemma-2-2b
+    model_type: gemma2
+    family: gemma2
+    gated: true
+    notes: Unsupported; soft-capping and alternating sliding windows.
+    license: gemma   # from the Hugging Face model card, 2026-10-13
+    verified: false
+  gemma3-1b:
+    hf_id: google/gemma-3-1b-pt
+    model_type: gemma3
+    family: gemma3
+    gated: true
+    notes: Unsupported; sliding-window layers.
+    license: gemma   # from the Hugging Face model card, 2026-10-13
+    verified: false
+  phi-2:
+    hf_id: microsoft/phi-2
+    model_type: phi
+    family: phi
+    notes: Unsupported; non-gated MLP and partial rotary.
+    license: mit   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  phi-3-mini:
+    hf_id: microsoft/Phi-3-mini-4k-instruct
+    model_type: phi3
+    family: phi3
+    notes: Unsupported; fused qkv_proj and gate_up_proj.
+    license: mit   # from the Hugging Face model card, 2026-10-13
+    verified: true
+  smollm3-3b:
+    hf_id: HuggingFaceTB/SmolLM3-3B-Base
+    model_type: smollm3
+    family: smollm3
+    notes: Unsupported; verify the released sizes before use.
+    license: apache-2.0   # from the Hugging Face model card, 2026-10-13
+    verified: false

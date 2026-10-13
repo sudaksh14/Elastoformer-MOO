@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets: never in the repository (the token lives in ~/.hf_token, outside it)
+.hf_token
+*.token
+secrets/
+.env
+
+# Heavy artifacts belong in $SCRATCH_ROOT (/var/scratch/skalra/elastoformer_moo on DAS-6), never here
+runs/
+data/
+models/
+checkpoints/
+*.bin
+*.pt
+*.pth
+*.safetensors
+hf_cache/
+
+# Job output
+slurm-*.out
+logs/
+
+# Third-party papers kept locally for reference (not ours to redistribute)
+related papers/
+
+# LaTeX build output
+paper/**/*.aux
+paper/**/*.bbl
+paper/**/*.blg
+paper/**/*.log
+paper/**/*.out
+paper/**/*.pdf
+paper/**/*.synctex.gz
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Keep small recorded results
+!results/

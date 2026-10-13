@@ -1,0 +1,47 @@
+\section{Evaluation}
+\label{sec:eval}
+
+\paragraph{Setup.}
+Models: \TODO{primary SLM and development SLM, with parameter counts}, chosen from candidates such as SmolLM2~\cite{allal2025smollm2}, Qwen2.5~\cite{qwen2025qwen25} and Llama~3.2~\cite{meta2024llama32}. Training data and tokens: \TODO{corpus and number of tokens for joint training}. Hardware: two NVIDIA A40 GPUs for training; an NVIDIA Jetson Orin Nano 8\,GB for edge measurements, in \TODO{power mode and JetPack version}. Every configuration is evaluated with the same prompts, sequence lengths, batch size and precision. \TODO{fill in the evaluation protocol}
+
+\paragraph{Baselines.}
+(i) The full pretrained model. (ii) Naive prefix slicing of the pretrained model, without training. (iii) Importance-ordered slicing, without training. (iv) The same nested configurations trained with the frozen-growth recipe of ElastoFormer~\cite{kalra2025elastoformer}. (v) Independently pruned models at matched sizes, using a structured pruning method such as LLM-Pruner~\cite{ma2023llmpruner} or SliceGPT~\cite{ashkboos2024slicegpt}. (vi) Independently stored quantized checkpoints, for the switching comparison.
+
+\subsection{Quality across configurations}
+
+\begin{table}[t]
+  \caption{Perplexity and downstream accuracy per configuration. \TODO{fill from the training and baseline runs}}
+  \label{tab:quality}
+  \begin{tabular}{lcccc}
+    \toprule
+    Configuration & Params (B) & Perplexity & Downstream avg. & Relative to full \\
+    \midrule
+    Full model       & \TODO{} & \TODO{} & \TODO{} & 1.00 \\
+    Smallest (ours)  & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    Middle (ours)    & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    Smallest, naive slice & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    Smallest, ElastoFormer recipe & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Edge measurements on Jetson Orin Nano}
+
+\begin{table}[t]
+  \caption{Per-configuration cost on Jetson Orin Nano 8\,GB. \TODO{fill from device runs; state the measurement method for energy}}
+  \label{tab:edge}
+  \begin{tabular}{lccccc}
+    \toprule
+    Configuration & TTFT (ms) & Decode (tok/s) & Peak mem. (MB) & Energy (mJ/token) & Switch (ms) \\
+    \midrule
+    Smallest & \TODO{} & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    Largest  & \TODO{} & \TODO{} & \TODO{} & \TODO{} & \TODO{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Switching cost is reported two ways: selecting a different prefix of the resident weights, and reloading a separately stored checkpoint. \TODO{report both}. Prompt-length sensitivity and KV-cache growth are reported in \TODO{figure or table reference}.
+
+\subsection{Ablations}
+
+\TODO{Distillation on/off, sandwich sampling on/off, importance ordering on/off, monotonicity penalty on/off, quantization bit-width. Report only ablations that were run.}

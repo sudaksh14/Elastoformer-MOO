@@ -1,0 +1,47 @@
+# E3: joint nested training of SmolLM2-360M on 2 GPUs (data parallel, one process per GPU).
+#
+# Hyperparameters are initial, untuned values, not the result of a search. Write floats with a dot
+# (1.0e-4): PyYAML reads `1e-4` as a string and TrainConfig rejects it.
+#
+# Global batch = world_size * data.batch_size * train.grad_accum sequences. With 2 GPUs, batch 8 and
+# accumulation 2 that is 32 sequences of 1024 tokens = 32,768 unique tokens per optimizer step.
+# run_experiments.sh points model, out_dir and the data files at the right places on /var/scratch.
+model: smollm2-360m           # replaced by the importance-ordered checkpoint if one exists (E2)
+model_dtype: float32          # fp32 master weights; bf16 autocast below
+attn: flash_attention_2       # explicit, never silently replaced by sdpa
+out_dir: runs/smollm2-360m_nested
+
+elastic:
+  fractions: [0.25, 0.5, 0.75, 1.0]
+  mlp_multiple: 256
+  min_kv_groups: 1
+
+train:
+  steps: 1500                 # 1500 steps = 49.2M tokens; override with --set train.steps=N
+  lr: 1.0e-4
+  min_lr_ratio: 0.1
+  warmup_steps: 100
+  weight_decay: 0.0
+  grad_clip: 1.0
+  grad_accum: 2
+  ce_weight: 1.0
+  kd_weight: 1.0
+  temperature: 1.0
+  mono_weight: 0.0            # ablation: 0.5
+  n_random: 1
+  teacher: frozen_copy
+  autocast_bf16: true
+  seed: 0
+  log_every: 10
+  save_every: 250
+
+data:
+  train_tokens: data/train.bin
+  val_tokens:
+    wikitext2: data/wikitext2_test.bin
+    c4: data/c4_val.bin
+    fineweb: data/fineweb_val.bin
+  seq_len: 1024
+  batch_size: 8               # per GPU
+  sampling: epoch             # every block once per epoch, disjoint across ranks, exact on resume
+  eval_batches: 40

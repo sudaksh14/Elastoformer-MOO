@@ -1,0 +1,70 @@
+% SenSys 2027 submission: anonymous, double-blind draft (SLM scope).
+% Overleaf: set the main document to main.tex and the compiler to pdfLaTeX.
+%
+% Submission:  \documentclass[sigconf,review,anonymous]{acmart}   (this file)
+% Camera-ready: \documentclass[sigconf]{acmart}  and fill in the author block.
+\documentclass[sigconf,review,anonymous]{acmart}
+
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{amsmath}
+
+% Placeholders: every number, claim or figure that depends on new experiments.
+% Remove \TODO before submission; the build will show remaining placeholders.
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+
+\AtBeginDocument{\providecommand\BibTeX{{Bibtex}}}
+
+\acmConference[SenSys '27]{ACM Conference on Embedded Networked Sensor Systems}{TBD}{TBD}
+\acmISBN{}
+\setcopyright{none}
+\settopmatter{printacmref=false}
+
+\title{Nested Shared-Weight Elastic Inference for Small Language Models on Shared-Memory Edge Devices}
+
+% Anonymous for review. The anonymous option replaces this block.
+\author{Anonymous Author(s)}
+\affiliation{%
+  \institution{Anonymous Institution}
+  \country{}
+}
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+  <concept>
+    <concept_id>10010520.10010553.10010562</concept_id>
+    <concept_desc>Computer systems organization~Embedded systems</concept_desc>
+    <concept_significance>500</concept_significance>
+  </concept>
+  <concept>
+    <concept_id>10010147.10010178.10010179</concept_id>
+    <concept_desc>Computing methodologies~Natural language processing</concept_desc>
+    <concept_significance>300</concept_significance>
+  </concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Computer systems organization~Embedded systems}
+\ccsdesc[300]{Computing methodologies~Natural language processing}
+
+\keywords{elastic inference, nested networks, small language models, edge AI, Jetson}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/design}
+\input{sections/evaluation}
+\input{sections/discussion}
+\input{sections/extension_vit}
+\input{sections/conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

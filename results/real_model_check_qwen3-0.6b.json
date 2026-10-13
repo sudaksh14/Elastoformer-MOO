@@ -1,0 +1,81 @@
+{
+  "model": "qwen3-0.6b",
+  "hf_path": "Qwen/Qwen3-0.6B-Base",
+  "tokens": 11676,
+  "held_out_tokens": 5888,
+  "arch": {
+    "model_type": "qwen3",
+    "num_layers": 28,
+    "hidden_size": 1024,
+    "num_heads": 16,
+    "num_kv_heads": 8,
+    "head_dim": 128,
+    "intermediate_size": 3072,
+    "tie_word_embeddings": true
+  },
+  "configs": [
+    [
+      "f025",
+      2,
+      768
+    ],
+    [
+      "f050",
+      4,
+      1536
+    ],
+    [
+      "f075",
+      6,
+      2304
+    ],
+    [
+      "f100",
+      8,
+      3072
+    ]
+  ],
+  "full_config_bit_identical": true,
+  "float32_vs_sliced": {
+    "f025": {
+      "max_abs_diff": 0.0,
+      "relative": 0.0,
+      "top1_agreement": 1.0,
+      "active_parameters": 265748480,
+      "standalone_parameters": 265748480
+    },
+    "f050": {
+      "max_abs_diff": 0.0,
+      "relative": 0.0,
+      "top1_agreement": 1.0,
+      "active_parameters": 375848960,
+      "standalone_parameters": 375848960
+    },
+    "f075": {
+      "max_abs_diff": 0.0,
+      "relative": 0.0,
+      "top1_agreement": 1.0,
+      "active_parameters": 485949440,
+      "standalone_parameters": 485949440
+    }
+  },
+  "float64_max_abs_diff_vs_sliced": {
+    "f025": 0.0,
+    "f050": 0.0,
+    "f075": 0.0
+  },
+  "heldout_perplexity_original_order": {
+    "f025": 460333.06772781746,
+    "f050": 7625.729012600019,
+    "f075": 267.7622775404412,
+    "f100": 63.02048669100479
+  },
+  "permutation_max_logit_diff_fp32": 6.67572021484375e-05,
+  "heldout_perplexity_importance_ordered": {
+    "f025": 87486721.69756205,
+    "f050": 144428.09851212247,
+    "f075": 350.79749979277017,
+    "f100": 63.020495836812785
+  },
+  "note": "Smoke check of the mechanism on a small text sample with no training. Calibration and held-out text come from the same files, so these perplexities are not experimental results."
+}

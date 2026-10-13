@@ -1,0 +1,14 @@
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+\TODO{Write after results are known. Points to address:}
+
+\begin{itemize}
+  \item Scope: decoder-only SLMs from one model family, \TODO{names of the evaluated models}, on one device model. No claim is made for other Jetson modules or other runtimes.
+  \item Quality limits: \TODO{largest gap to the full model, at which configuration}.
+  \item Training cost of joint nested training relative to the frozen-growth recipe.
+  \item Memory headroom on 8\,GB shared memory once the KV cache, OS and runtime are counted.
+  \item Quantization: whether 4-bit configurations were faster on the device, and where they were not.
+  \item Configuration-specific storage, if any per-configuration parameters are added.
+  \item Generative AI use in the research, if any, as required by the call for papers (describe it in the methods, not here).
+\end{itemize}
