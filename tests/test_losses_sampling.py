@@ -99,3 +99,13 @@ def test_sandwich_small_sets():
     assert len(zero_random.sample()) == 2
     with pytest.raises(ValueError):
         SandwichSampler([], ArchInfo.from_hf_config(tiny_model("llama").config))
+
+
+def test_naive_sampling_draws_n_random_configs_without_forced_ends():
+    arch, configs, _ = make_sampler()
+    naive = SandwichSampler(configs, arch, n_random=1, seed=0, sandwich=False)
+    drawn = [naive.sample() for _ in range(200)]
+    assert all(len(p) == 1 for p in drawn)
+    assert {p[0].name for p in drawn} == {c.name for c in configs}  # all four, ends included, by chance
+    two = SandwichSampler(configs, arch, n_random=2, seed=0, sandwich=False)
+    assert all(len(set(c.name for c in two.sample())) == 2 for _ in range(20))

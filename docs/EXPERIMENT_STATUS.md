@@ -111,7 +111,7 @@ Start point is the E1/E2 importance-ordered checkpoint. Perplexity, lower is bet
   learning rate that is too high for the full configuration, not a bug. This is untested.
 - Gaps to the full model on WikiText-2 are still 6.7x (f025), 3.0x (f050), 1.5x (f075).
 - What it does not show: that the recipe beats the naive one (no baseline run), that more tokens fix the regression, or that it holds on
-  another model or seed. Next steps (lower lr or heavier max-config weight sweep, naive baseline, then the 500M main run) are deferred by the authors.
+  another model or seed. Follow-up runs (naive baseline 27797; lr 3e-5 and 1e-5 sweep 27798, 27799; all 50M tokens, same seed and data) were submitted 2026-10-14 and have no results yet. A heavier max-config weight is not implemented. The 500M main run waits for these.
 
 ## DAS-6 job log
 
@@ -134,6 +134,10 @@ Start point is the E1/E2 importance-ordered checkpoint. Perplexity, lower is bet
 | 27782 | 30-step probe, node-local data | defq | 205 | passed, 4.11 s/step, evaluation ok |
 | 27783 | **E3 pilot, 50M tokens** | defq | 205 (2x A40) | passed, 1,500 steps, 6,236 s |
 | 27784 | CPU tests | fatq | 201 | 245 of 248 passed; 3 test-isolation failures, fixed |
+| 27796 | CPU tests after adding `train.sandwich` | fatq | 201 | 249 passed |
+| 27797 | **E3 naive-recipe baseline**, 50M tokens: `train.sandwich=false kd_weight=0 teacher=none`, lr 1e-4 (one random config per step, no distillation), run `e3_naive_lr1e-4_50M` | defq | 205 (2x A40) | submitted 2026-10-14, running (about 1.2 s/step) |
+| 27798 | E3 recipe sweep, 50M tokens, lr 3e-5, run `e3_sandwich_lr3e-5_50M` | defq | 205 | submitted, queued behind 27797 |
+| 27799 | E3 recipe sweep, 50M tokens, lr 1e-5, run `e3_sandwich_lr1e-5_50M` | defq | 205 | submitted, queued |
 
 Logs: `/var/scratch/skalra/elastoformer_moo/logs/`. Run directories: `/var/scratch/skalra/elastoformer_moo/runs/`.
 Environment: `/var/scratch/skalra/prune_llm` (Python 3.10.18, torch 2.7.0+cu126) plus the `pylibs` overlay (transformers 4.51.1,

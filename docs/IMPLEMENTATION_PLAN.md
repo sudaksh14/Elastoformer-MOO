@@ -44,7 +44,7 @@ Written for: the authors and the implementing engineer.
 
 ## 4. Order of remaining work
 
-1. E3: the 50M-token pilot is done (full model regressed 5%; fix and baseline pending); then the 500M-token main run (about 17 hours on 2x A40), then E4 ablations.
+1. E3: the 50M-token pilot is done (full model regressed 5%; fix and baseline runs submitted 2026-10-14, jobs 27797-27799); then the 500M-token main run (about 17 hours on 2x A40), then E4 ablations.
 2. Llama-3.2-1B needs `HF_TOKEN` (gated). Until then, SmolLM2 and Qwen are the runnable models.
 3. R4b to R4d, then R5, then R6 (needs the Jetson and a runtime decision).
 4. R8b once `lm-eval` is available in the chosen environment.

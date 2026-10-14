@@ -48,6 +48,7 @@ class TrainConfig:
     temperature: float = 1.0
     mono_weight: float = 0.0
     n_random: int = 1
+    sandwich: bool = True   # False: naive recipe, n_random configurations drawn uniformly from all of them
     teacher: str = "frozen_copy"
     autocast_bf16: bool = False
     seed: int = 0
@@ -60,7 +61,7 @@ class TrainConfig:
             ok = isinstance(value, expected) and not isinstance(value, bool)
             if name == "teacher":
                 ok = isinstance(value, str)
-            elif name == "autocast_bf16":
+            elif name in ("autocast_bf16", "sandwich"):
                 ok = isinstance(value, bool)
             elif name == "betas":
                 ok = isinstance(value, (tuple, list)) and len(value) == 2 and all(isinstance(b, (int, float)) for b in value)
@@ -81,7 +82,7 @@ _FIELD_TYPES = {
     "steps": int, "lr": (int, float), "min_lr_ratio": (int, float), "warmup_steps": int,
     "weight_decay": (int, float), "betas": tuple, "grad_clip": (int, float), "grad_accum": int,
     "ce_weight": (int, float), "kd_weight": (int, float), "temperature": (int, float),
-    "mono_weight": (int, float), "n_random": int, "teacher": str, "autocast_bf16": bool,
+    "mono_weight": (int, float), "n_random": int, "sandwich": bool, "teacher": str, "autocast_bf16": bool,
     "seed": int, "log_every": int, "save_every": int,
 }
 
@@ -228,7 +229,7 @@ def train(
     out.mkdir(parents=True, exist_ok=True)
     device = next(model.parameters()).device
 
-    sampler = SandwichSampler(configs, controller.arch, tcfg.n_random, tcfg.seed + 7919 * dist_ctx.rank)
+    sampler = SandwichSampler(configs, controller.arch, tcfg.n_random, tcfg.seed + 7919 * dist_ctx.rank, sandwich=tcfg.sandwich)
     optimizer = torch.optim.AdamW(_param_groups(model, tcfg.weight_decay), lr=tcfg.lr, betas=tcfg.betas)
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, _lr_lambda(tcfg))
 
