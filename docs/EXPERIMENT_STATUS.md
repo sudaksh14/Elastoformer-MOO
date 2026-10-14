@@ -171,6 +171,7 @@ Everything except the peak learning rate is the pilot's recipe. WikiText-2 perpl
 | 27797 | **E3 naive-recipe baseline**, 50M tokens: `train.sandwich=false kd_weight=0 teacher=none`, lr 1e-4 (one random config per step, no distillation), run `e3_naive_lr1e-4_50M` | defq | 205 (2x A40) | passed, results below |
 | 27798 | E3 recipe sweep, 50M tokens, lr 3e-5, run `e3_sandwich_lr3e-5_50M` | defq | 205 | passed, results below |
 | 27799 | E3 recipe sweep, 50M tokens, lr 1e-5, run `e3_sandwich_lr1e-5_50M` | defq | 205 | passed, results below |
+| 27801 | **E3 main run, 500M tokens**: 15,260 steps, lr 5e-5 (midpoint of the lr sweep; authors' choice), 300 warm-up steps, cosine to 10%, save every 500, run `e3_main_smollm2-360m_500M`, 48 h limit, seed 0 | defq | 205 (2x A40) | submitted 2026-10-15; expected about 17 h |
 | 27800 | CPU tests after the cost axis, Taylor importance and CPU nodes 201-203 | fatq | 201-203 | 266 passed |
 
 Logs: `/var/scratch/skalra/elastoformer_moo/logs/`. Run directories: `/var/scratch/skalra/elastoformer_moo/runs/`.
