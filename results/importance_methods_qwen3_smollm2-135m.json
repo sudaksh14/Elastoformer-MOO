@@ -1,0 +1,74 @@
+{
+ "note": "No-training importance-ordering comparison, fp32, CPU, laptop. Calibration: 100 blocks x 256 tokens from the text of the related-papers PDFs (6 papers); held-out: 48 blocks x 256 tokens from the other 4 papers. Perplexity; lower is better. One calibration set, no seeds; a mechanism check, not an experiment. Scripts were scratch files, rerun from importance.py options method/skip_first_token.",
+ "qwen3-0.6b": {
+  "original": {
+   "f025": 309854.2,
+   "f050": 4534.6,
+   "f075": 161.3
+  },
+  "act_weight": {
+   "f025": 6856309.9,
+   "f050": 43907.6,
+   "f075": 144.2
+  },
+  "act_weight_skip0": {
+   "f025": 2524808.2,
+   "f050": 42065.9,
+   "f075": 148.8
+  },
+  "taylor": {
+   "f025": 114117.2,
+   "f050": 4792.0,
+   "f075": 110.8
+  },
+  "taylor_skip0": {
+   "f025": 123622.8,
+   "f050": 5911.8,
+   "f075": 110.0
+  }
+ },
+ "smollm2-135m": {
+  "original": {
+   "f025": 26038766.5,
+   "f050": 932602.5,
+   "f075": 136241.8
+  },
+  "act_weight": {
+   "f025": 1619.5,
+   "f050": 501.1,
+   "f075": 201.7
+  },
+  "act_weight_skip0": {
+   "f025": 1591.3,
+   "f050": 498.9,
+   "f075": 202.2
+  },
+  "taylor": {
+   "f025": 1211.2,
+   "f050": 450.1,
+   "f075": 183.9
+  },
+  "taylor_skip0": {
+   "f025": 1294.4,
+   "f050": 329.3,
+   "f075": 160.0
+  }
+ },
+ "qwen3-0.6b_ablation_act_weight_parts": {
+  "mlp_only": {
+   "f025": 557918.2,
+   "f050": 62127.2,
+   "f075": 181.9
+  },
+  "groups_only": {
+   "f025": 3541242.0,
+   "f050": 36860.9,
+   "f075": 226.7
+  },
+  "groups_reversed": {
+   "f025": 28176909.7,
+   "f050": 767913.3,
+   "f075": 23175.8
+  }
+ }
+}

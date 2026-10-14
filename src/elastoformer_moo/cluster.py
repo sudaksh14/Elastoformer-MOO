@@ -1,6 +1,6 @@
 """Node placement policy for DAS-6 jobs.
 
-GPU work must run on nodes 205-208 and CPU-only work on nodes 201-204. The default patterns
+GPU work must run on nodes 205-208 and CPU-only work on nodes 201-203. The default patterns
 assume node names like ``node205``; that naming is not verified against the cluster. Override
 with ``ELASTOFORMER_ALLOWED_GPU_NODES`` / ``ELASTOFORMER_ALLOWED_CPU_NODES`` (regular
 expressions matched against the whole node name) once the real names are known.
@@ -12,7 +12,7 @@ import os
 import re
 from typing import Iterable
 
-DEFAULT_PATTERNS = {"gpu": r"node20[5-8]", "cpu": r"node20[1-4]"}
+DEFAULT_PATTERNS = {"gpu": r"node20[5-8]", "cpu": r"node20[1-3]"}
 _ENV = {"gpu": "ELASTOFORMER_ALLOWED_GPU_NODES", "cpu": "ELASTOFORMER_ALLOWED_CPU_NODES"}
 
 

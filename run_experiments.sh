@@ -14,7 +14,7 @@
 #   MODEL=llama3.2-1b ./run_experiments.sh eval
 #
 # Stages e1e2, bench, permute, train and eval are GPU work: they exit 3 on any node outside 205-208.
-# Stages download and data are CPU work: they exit 3 on any node outside 201-204.
+# Stages download and data are CPU work: they exit 3 on any node outside 201-203.
 # Flash attention is explicit (ATTN, default flash_attention_2) and never silently replaced by sdpa.
 # Environment:
 #   MODEL     registry name (default llama3.2-1b)

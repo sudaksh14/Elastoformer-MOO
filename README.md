@@ -72,7 +72,7 @@ untuned and the calibration set tiny; treat these as a reason to compare orderin
 
 ## DAS-6
 
-GPU work runs only on nodes 205-208 and CPU-only work on nodes 201-204. Submit through the wrapper, which
+GPU work runs only on nodes 205-208 and CPU-only work on nodes 201-203. Submit through the wrapper, which
 excludes every other node, and the job scripts re-check the node before doing anything:
 
 ```bash

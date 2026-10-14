@@ -48,6 +48,7 @@ class TrainConfig:
     temperature: float = 1.0
     mono_weight: float = 0.0
     n_random: int = 1
+    cost_axis: str = "params"   # what 'cost' means for reporting and learned weights: see cost.py
     sandwich: bool = True   # False: naive recipe, n_random configurations drawn uniformly from all of them
     teacher: str = "frozen_copy"
     autocast_bf16: bool = False
@@ -59,7 +60,7 @@ class TrainConfig:
         for name, value in asdict(self).items():
             expected = _FIELD_TYPES[name]
             ok = isinstance(value, expected) and not isinstance(value, bool)
-            if name == "teacher":
+            if name in ("teacher", "cost_axis"):
                 ok = isinstance(value, str)
             elif name in ("autocast_bf16", "sandwich"):
                 ok = isinstance(value, bool)
@@ -82,7 +83,7 @@ _FIELD_TYPES = {
     "steps": int, "lr": (int, float), "min_lr_ratio": (int, float), "warmup_steps": int,
     "weight_decay": (int, float), "betas": tuple, "grad_clip": (int, float), "grad_accum": int,
     "ce_weight": (int, float), "kd_weight": (int, float), "temperature": (int, float),
-    "mono_weight": (int, float), "n_random": int, "sandwich": bool, "teacher": str, "autocast_bf16": bool,
+    "mono_weight": (int, float), "n_random": int, "sandwich": bool, "cost_axis": str, "teacher": str, "autocast_bf16": bool,
     "seed": int, "log_every": int, "save_every": int,
 }
 

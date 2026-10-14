@@ -1,0 +1,116 @@
+{
+  "wikitext2": [
+    {
+      "config": "f025",
+      "kv_groups": 1,
+      "mlp_width": 768,
+      "active_parameters": 133755840,
+      "nll": 5.136986157709501,
+      "perplexity": 170.20203246738805,
+      "tokens": 303831
+    },
+    {
+      "config": "f050",
+      "kv_groups": 3,
+      "mlp_width": 1280,
+      "active_parameters": 212399040,
+      "nll": 3.978438700088347,
+      "perplexity": 53.43354328084386,
+      "tokens": 303831
+    },
+    {
+      "config": "f075",
+      "kv_groups": 4,
+      "mlp_width": 2048,
+      "active_parameters": 298906560,
+      "nll": 3.127004143364903,
+      "perplexity": 22.80555492540579,
+      "tokens": 303831
+    },
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.598414754225349,
+      "perplexity": 13.442411609449808,
+      "tokens": 303831
+    }
+  ],
+  "c4": [
+    {
+      "config": "f025",
+      "kv_groups": 1,
+      "mlp_width": 768,
+      "active_parameters": 133755840,
+      "nll": 4.833789154887199,
+      "perplexity": 125.68630438503392,
+      "tokens": 261888
+    },
+    {
+      "config": "f050",
+      "kv_groups": 3,
+      "mlp_width": 1280,
+      "active_parameters": 212399040,
+      "nll": 3.896609403192997,
+      "perplexity": 49.23522896756666,
+      "tokens": 261888
+    },
+    {
+      "config": "f075",
+      "kv_groups": 4,
+      "mlp_width": 2048,
+      "active_parameters": 298906560,
+      "nll": 3.271513521671295,
+      "perplexity": 26.351192277094484,
+      "tokens": 261888
+    },
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.905497692525387,
+      "perplexity": 18.274336389955373,
+      "tokens": 261888
+    }
+  ],
+  "fineweb": [
+    {
+      "config": "f025",
+      "kv_groups": 1,
+      "mlp_width": 768,
+      "active_parameters": 133755840,
+      "nll": 4.671322369575501,
+      "perplexity": 106.8389296110588,
+      "tokens": 327360
+    },
+    {
+      "config": "f050",
+      "kv_groups": 3,
+      "mlp_width": 1280,
+      "active_parameters": 212399040,
+      "nll": 3.6984818041324616,
+      "perplexity": 40.38594402002809,
+      "tokens": 327360
+    },
+    {
+      "config": "f075",
+      "kv_groups": 4,
+      "mlp_width": 2048,
+      "active_parameters": 298906560,
+      "nll": 3.0295271456241606,
+      "perplexity": 20.687448125887347,
+      "tokens": 327360
+    },
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.6307423770427705,
+      "perplexity": 13.884073294429676,
+      "tokens": 327360
+    }
+  ]
+}

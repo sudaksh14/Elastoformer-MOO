@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# CPU-only tests for DAS-6 nodes 201-204. Exits 3 on any other node before running anything.
+# CPU-only tests for DAS-6 nodes 201-203. Exits 3 on any other node before running anything.
 #
 #   ./run_cpu_tests.sh [pytest args...]
 set -euo pipefail

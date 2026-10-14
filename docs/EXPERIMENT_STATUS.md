@@ -111,7 +111,40 @@ Start point is the E1/E2 importance-ordered checkpoint. Perplexity, lower is bet
   learning rate that is too high for the full configuration, not a bug. This is untested.
 - Gaps to the full model on WikiText-2 are still 6.7x (f025), 3.0x (f050), 1.5x (f075).
 - What it does not show: that the recipe beats the naive one (no baseline run), that more tokens fix the regression, or that it holds on
-  another model or seed. Follow-up runs (naive baseline 27797; lr 3e-5 and 1e-5 sweep 27798, 27799; all 50M tokens, same seed and data) were submitted 2026-10-14 and have no results yet. A heavier max-config weight is not implemented. The 500M main run waits for these.
+  another model or seed. Follow-up runs (naive baseline 27797, finished, see below; lr 3e-5 and 1e-5 sweep 27798, 27799; all 50M tokens, same seed and data) were submitted 2026-10-14 and have no results yet. A heavier max-config weight is not implemented. These runs are complete; the 500M main run is next, pending the authors' confirmation of its settings.
+
+### E3 naive-recipe baseline (same 50M tokens, lr 1e-4, one seed)
+
+One random configuration per step and no distillation, so each step costs about a third of the pilot's compute: the comparison is at equal
+tokens, not equal FLOPs. Perplexity:
+
+| Config | WikiText-2 pilot / naive | C4 val pilot / naive | FineWeb-Edu pilot / naive |
+|---|---|---|---|
+| f025 | 91.3 / 156.1 | 81.0 / 110.1 | 66.9 / 92.8 |
+| f050 | 41.1 / 50.4 | 41.4 / 44.3 | 33.2 / 35.8 |
+| f075 | 21.0 / 24.1 | 24.9 / 25.7 | 19.3 / 20.0 |
+| f100 | 13.62 / 15.34 | 18.43 / 18.78 | 14.00 / 14.19 |
+
+The sandwich + distillation recipe is better than the naive one at every configuration and on every set at equal tokens, including the full
+model, whose drift is smaller (+5.0% vs +18% on WikiText-2). The naive baseline's full model drifts more, so the drift is not caused by
+distillation alone. This is one seed and the naive run saw one third of the forward passes.
+
+### E3 learning-rate sweep (50M tokens, sandwich + distillation, one seed)
+
+Everything except the peak learning rate is the pilot's recipe. WikiText-2 perplexity (C4 and FineWeb-Edu show the same pattern; see
+`results/e3_*_eval.json`). All experiments in this project use one seed (seed 0) by the authors' rule.
+
+| Config | lr 1e-4 (pilot) | lr 3e-5 | lr 1e-5 | naive, lr 1e-4 | untrained E2 start |
+|---|---|---|---|---|---|
+| f025 | 91.3 | 170.2 | 286.1 | 156.1 | 4,489 |
+| f050 | 41.1 | 53.4 | 72.0 | 50.4 | 406.5 |
+| f075 | 21.0 | 22.8 | 24.8 | 24.1 | 45.6 |
+| f100 (full) | 13.62 | 13.44 | 13.32 | 15.34 | 12.97 |
+
+- A lower learning rate reduces the full-model drift (+5.0%, +3.6%, +2.7% over 12.97) but the small configurations recover much less in
+  50M tokens (f025: 91, 170, 286). No single peak learning rate gets both at this budget; this is the trade-off that per-configuration
+  loss weights would address.
+- 50M tokens only: the small-configuration gap may narrow with more tokens, and this has not been tested.
 
 ## DAS-6 job log
 
@@ -135,9 +168,10 @@ Start point is the E1/E2 importance-ordered checkpoint. Perplexity, lower is bet
 | 27783 | **E3 pilot, 50M tokens** | defq | 205 (2x A40) | passed, 1,500 steps, 6,236 s |
 | 27784 | CPU tests | fatq | 201 | 245 of 248 passed; 3 test-isolation failures, fixed |
 | 27796 | CPU tests after adding `train.sandwich` | fatq | 201 | 249 passed |
-| 27797 | **E3 naive-recipe baseline**, 50M tokens: `train.sandwich=false kd_weight=0 teacher=none`, lr 1e-4 (one random config per step, no distillation), run `e3_naive_lr1e-4_50M` | defq | 205 (2x A40) | submitted 2026-10-14, running (about 1.2 s/step) |
-| 27798 | E3 recipe sweep, 50M tokens, lr 3e-5, run `e3_sandwich_lr3e-5_50M` | defq | 205 | submitted, queued behind 27797 |
-| 27799 | E3 recipe sweep, 50M tokens, lr 1e-5, run `e3_sandwich_lr1e-5_50M` | defq | 205 | submitted, queued |
+| 27797 | **E3 naive-recipe baseline**, 50M tokens: `train.sandwich=false kd_weight=0 teacher=none`, lr 1e-4 (one random config per step, no distillation), run `e3_naive_lr1e-4_50M` | defq | 205 (2x A40) | passed, results below |
+| 27798 | E3 recipe sweep, 50M tokens, lr 3e-5, run `e3_sandwich_lr3e-5_50M` | defq | 205 | passed, results below |
+| 27799 | E3 recipe sweep, 50M tokens, lr 1e-5, run `e3_sandwich_lr1e-5_50M` | defq | 205 | passed, results below |
+| 27800 | CPU tests after the cost axis, Taylor importance and CPU nodes 201-203 | fatq | 201-203 | 266 passed |
 
 Logs: `/var/scratch/skalra/elastoformer_moo/logs/`. Run directories: `/var/scratch/skalra/elastoformer_moo/runs/`.
 Environment: `/var/scratch/skalra/prune_llm` (Python 3.10.18, torch 2.7.0+cu126) plus the `pylibs` overlay (transformers 4.51.1,
@@ -163,9 +197,33 @@ flash-attn 2.8.3).
 | Qwen3-0.6B | original | 4.6e5 | 7.6e3 | 268 | 63.0 |
 | Qwen3-0.6B | importance-ordered | **8.7e7** | **1.4e5** | **351** | 63.0 |
 
-**Open finding (deferred by the authors):** importance ordering made Qwen3-0.6B much worse in this check. Suspects, not
-investigated: per-head q/k norm, massive-activation channels, a tiny calibration set. Settle it before running E1 at scale on Qwen3.
-The better-designed E1 on SmolLM2-360M above (131k C4 calibration tokens) shows the heuristic helping.
+**Qwen3 importance-ordering finding, investigated 2026-10-14** (`results/importance_methods_qwen3_smollm2-135m.json`). Protocol: fp32, CPU,
+100 calibration blocks of 256 tokens from the text of six of the related papers, 48 held-out blocks from the other four; one calibration
+set, no seeds, no training; perplexity. The original smoke check used 6k tokens that overlapped calibration and evaluation.
+
+| Model | Ordering | f025 | f050 | f075 |
+|---|---|---|---|---|
+| Qwen3-0.6B | original | 3.1e5 | 4,535 | 161 |
+| Qwen3-0.6B | activation x weight (current default) | 6.9e6 | 43,908 | 144 |
+| Qwen3-0.6B | activation x weight, position 0 excluded | 2.5e6 | 42,066 | 149 |
+| Qwen3-0.6B | **first-order Taylor, `|x * dL/dx|`** | **1.1e5** | 4,792 | **111** |
+| Qwen3-0.6B | Taylor, position 0 excluded | 1.2e5 | 5,912 | 110 |
+| SmolLM2-135M | original | 2.6e7 | 9.3e5 | 1.4e5 |
+| SmolLM2-135M | activation x weight | 1,620 | 501 | 202 |
+| SmolLM2-135M | Taylor | 1,211 | 450 | 184 |
+| SmolLM2-135M | Taylor, position 0 excluded | 1,294 | 329 | 160 |
+
+- The current heuristic is the problem on Qwen3, not the calibration size: with 100 blocks it is still worse than the original order at f025
+  and f050, in both its MLP part (mlp-only 5.6e5 / 6.2e4 / 182) and its KV-group part (groups-only 3.5e6 / 3.7e4 / 227).
+  The exact equality of the elastic forward and the sliced model is unaffected (that check passed on Qwen3).
+- A first-order Taylor score (a backward pass, no parameter gradients) is better than activation x weight on both models: it removes the
+  regression at f075 and f025 on Qwen3 and improves on SmolLM2-135M. Excluding position 0 (the attention sink) helps on SmolLM2-135M at
+  f050 and f075 and does not matter on Qwen3.
+- **Not fixed in the sense of usable:** on Qwen3 the f025 and f050 perplexities stay in the 1e5 and 5e3 range for every ordering, so these
+  configurations need training regardless. Taylor on Qwen3 at f050 equals the original order (4,792 vs 4,535), it does not beat it.
+- The default is unchanged (`act_weight`), so E1/E2 and the E3 start checkpoint stay valid. Selecting the Taylor score is a flag
+  (`permute_model.py --importance-method taylor [--skip-first-token]`). It has not been run on SmolLM2-360M with the C4 calibration set
+  or followed by training, so whether it improves E3 is untested.
 
 ## Completion evidence
 

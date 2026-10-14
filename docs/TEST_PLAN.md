@@ -35,7 +35,7 @@ Fails (non-zero) on any syntax error, shell syntax error, or failing test.
 
 `test_scripts.py` needs a POSIX bash (Git Bash on Windows) and is skipped without one.
 
-## 2. CPU-only tests on DAS-6 (nodes 201-204)
+## 2. CPU-only tests on DAS-6 (nodes 201-203)
 
 ```bash
 scripts/submit.sh cpu submit_cpu_tests.slurm

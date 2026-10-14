@@ -8,7 +8,7 @@
 #   ELASTOFORMER_ENV    conda env name or venv directory (default: prune_llm)
 #   ELASTOFORMER_ALLOWED_GPU_NODES / ELASTOFORMER_ALLOWED_CPU_NODES
 #                       node-name regexes, matched against the whole name
-#                       (defaults: node20[5-8] and node20[1-4]; the naming is unverified)
+#                       (defaults: node20[5-8] and node20[1-3]; the naming is unverified)
 
 : "${ELASTOFORMER_ROOT:=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 : "${SCRATCH_ROOT:=/var/scratch/skalra/elastoformer_moo}"
@@ -48,7 +48,7 @@ require_node_class() {
   node="$(current_node)"
   case "$kind" in
     gpu) regex="${ELASTOFORMER_ALLOWED_GPU_NODES:-node20[5-8]}" ;;
-    cpu) regex="${ELASTOFORMER_ALLOWED_CPU_NODES:-node20[1-4]}" ;;
+    cpu) regex="${ELASTOFORMER_ALLOWED_CPU_NODES:-node20[1-3]}" ;;
     *) die "require_node_class: kind must be gpu or cpu, got '$kind'" 2 ;;
   esac
   if [[ ! "$node" =~ ^(${regex})$ ]]; then

@@ -11,13 +11,13 @@ def test_gpu_nodes_are_205_to_208(node):
     assert not cluster.is_allowed(node, "cpu")
 
 
-@pytest.mark.parametrize("node", ["node201", "node202", "node203", "node204"])
-def test_cpu_nodes_are_201_to_204(node):
+@pytest.mark.parametrize("node", ["node201", "node202", "node203"])
+def test_cpu_nodes_are_201_to_203(node):
     assert cluster.is_allowed(node, "cpu")
     assert not cluster.is_allowed(node, "gpu")
 
 
-@pytest.mark.parametrize("node", ["node200", "node209", "node2050", "xnode205", "node205.das6", "login", ""])
+@pytest.mark.parametrize("node", ["node200", "node204", "node209", "node2050", "xnode205", "node205.das6", "login", ""])
 def test_everything_else_is_rejected_for_both_kinds(node):
     assert not cluster.is_allowed(node, "gpu") and not cluster.is_allowed(node, "cpu")
 
@@ -29,7 +29,7 @@ def test_exclude_list_leaves_only_the_allowed_gpu_nodes():
 
 def test_exclude_list_leaves_only_the_allowed_cpu_nodes():
     excluded = cluster.exclude_list(ALL, "cpu")
-    assert set(ALL) - set(excluded) == {"node201", "node202", "node203", "node204"}
+    assert set(ALL) - set(excluded) == {"node201", "node202", "node203"}
 
 
 def test_exclude_list_refuses_when_no_node_matches():

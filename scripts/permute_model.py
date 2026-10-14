@@ -29,10 +29,13 @@ def main() -> int:
     parser.add_argument("--atol", type=float, default=1e-4)
     parser.add_argument("--rtol", type=float, default=1e-4)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--importance-method", default="act_weight", choices=["act_weight", "taylor"])
+    parser.add_argument("--skip-first-token", action="store_true", help="leave position 0 (attention sink) out of the statistics")
     args = parser.parse_args()
     report = permute_pretrained(
         args.model, args.out, args.calib, args.seq_len, args.batch_size, args.n_batches,
         args.compute_dtype, args.save_dtype, args.atol, args.rtol, args.device,
+        args.importance_method, args.skip_first_token,
     )
     print(json.dumps(report, indent=2))
     return 0

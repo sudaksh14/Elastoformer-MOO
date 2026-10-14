@@ -25,7 +25,7 @@ Written for: the authors and the implementing engineer.
 | R2 | One-time importance ordering applied consistently to q/k/v/o and gate/up/down, with a logit-equivalence check | `importance.py`, `permute.py` | TESTED |
 | R3 | Joint nested training: sandwich sampling, distillation from a frozen full model, no frozen shared weights | `losses.py`, `sampling.py`, `train.py`, `pipeline.py` | TESTED on tiny models (CPU); never run at scale; GPU path IMPLEMENTED, not run |
 | R4a | Monotonicity penalty | `losses.py`, `train.py` | TESTED |
-| R4b | Hypervolume-driven configuration weights | none | NOT STARTED |
+| R4b | Hypervolume-driven configuration weights | `cost.py` (selectable cost axis `train.cost_axis`: params, flops, kv_cache, `table:<json>` of measured latency/energy; `hypervolume_2d`) | cost axis DONE, the weight learning NOT STARTED |
 | R4c | Gradient-conflict measurement (E7) | none | NOT STARTED |
 | R4d | Per-configuration low-rank deltas (E12) | none | NOT STARTED |
 | R5 | Post-training quantization per configuration (8-bit, 4-bit) | none | NOT STARTED |
@@ -34,7 +34,7 @@ Written for: the authors and the implementing engineer.
 | R8a | Perplexity per configuration | `evaluate.py`, `data.py` | TESTED |
 | R8b | Downstream benchmarks (ARC, HellaSwag, PIQA, WinoGrande) | none | NOT STARTED: `lm-eval` is not installed in any inspected environment |
 | R9 | Model coverage and registry | `configs/models.yaml`, `registry.py`, `arch.py` | TESTED (registry, unsupported-model errors); llama, mistral, qwen2, qwen3 supported; gemma, phi, phi3, smollm3 raise `UnsupportedArchitectureError` |
-| R10 | Cluster tooling with node guards (GPU 205-208, CPU 201-204) | `cluster.py`, `scripts/lib.sh`, `scripts/submit.sh`, `scripts/sync_to_das6.sh`, `scripts/setup_pylibs.sh`, `run_*.sh`, `submit_*.slurm` | TESTED locally (bash tests, dry run) and **on DAS-6**: CPU job 27764 on node201 and GPU smoke job 27766 on node207 both ran on allowed nodes and passed. Experiment submission (`submit_experiments.slurm`) has not been exercised |
+| R10 | Cluster tooling with node guards (GPU 205-208, CPU 201-203) | `cluster.py`, `scripts/lib.sh`, `scripts/submit.sh`, `scripts/sync_to_das6.sh`, `scripts/setup_pylibs.sh`, `run_*.sh`, `submit_*.slurm` | TESTED locally (bash tests, dry run) and **on DAS-6**: CPU job 27764 on node201 and GPU smoke job 27766 on node207 both ran on allowed nodes and passed. Experiment submission (`submit_experiments.slurm`) has not been exercised |
 | R11 | Independent-checkpoint baseline (a configuration as a standalone model) | `export.py` | TESTED |
 | R12 | Replace the old ViT repository with a clean one | whole repo, `MIGRATION.md` | DONE: old repo verified pushed (commit `df028db`), then deleted; new repo initialized, no commits yet |
 | R14 | Flash attention as an explicit, never-silent backend | `pipeline.py` (`attn_implementation`), `scripts/build_flash_attn.sh`, `scripts/bench_attention.py`, `tests/test_gpu.py` | TESTED on an A40 (flash vs sdpa agree; elastic forward equals a standalone model under flash). Compiled from source because the prebuilt wheel cannot load on DAS-6. Benchmarked: not faster than `sdpa` for SmolLM2-360M at sequence 1024 |

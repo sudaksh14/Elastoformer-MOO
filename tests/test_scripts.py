@@ -53,7 +53,7 @@ def test_guard_accepts_gpu_nodes_for_gpu_work_only(node):
     assert refused.returncode == 3 and "refusing" in refused.stderr
 
 
-@pytest.mark.parametrize("node", ["node201", "node202", "node203", "node204"])
+@pytest.mark.parametrize("node", ["node201", "node202", "node203"])
 def test_guard_accepts_cpu_nodes_for_cpu_work_only(node):
     assert guard("cpu", node).returncode == 0
     refused = guard("gpu", node)
@@ -132,11 +132,11 @@ def test_gpu_submission_excludes_everything_but_205_to_208():
     assert "--gres=gpu:1" in line
 
 
-def test_cpu_submission_excludes_everything_but_201_to_204():
+def test_cpu_submission_excludes_everything_but_201_to_203():
     result = submit("cpu")
     line = next(l for l in result.stdout.splitlines() if "--exclude" in l)
     excluded = line.split("--exclude=")[1].split()[0].replace("\\", "").split(",")
-    assert set(excluded) == {f"node{n}" for n in range(205, 217)}
+    assert set(excluded) == {f"node{n}" for n in range(204, 217)}
     assert "--gres" not in line
 
 

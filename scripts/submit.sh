@@ -3,7 +3,7 @@
 #
 #   scripts/submit.sh <gpu|cpu> <slurm-script> [script args...]
 #
-# GPU jobs may only run on nodes 205-208, CPU-only jobs on nodes 201-204. Slurm's --nodelist
+# GPU jobs may only run on nodes 205-208, CPU-only jobs on nodes 201-203. Slurm's --nodelist
 # forces every listed node into the job, so the restriction is expressed as --exclude of the
 # complement, computed from the cluster's real node list. The job scripts also check the node
 # they land on and exit before doing any work if it is not allowed.

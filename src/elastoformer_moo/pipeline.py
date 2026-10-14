@@ -21,6 +21,7 @@ from .config import ElasticConfig, make_grid
 from .data import TokenBlocks
 from .distributed import DistContext, barrier, device_for, init_distributed, shutdown
 from .evaluate import evaluate_configs
+from .cost import make_cost_fn
 from .importance import collect_importance
 from .nested import make_elastic
 from .permute import permutation_from_importance, verify_permutation_equivalence
@@ -123,6 +124,8 @@ def permute_pretrained(
     atol: float = 1e-4,
     rtol: float = 1e-4,
     device: str = "cpu",
+    importance_method: str = "act_weight",
+    skip_first_token: bool = False,
 ) -> dict:
     """Importance-order a pretrained model, verify the logits are unchanged, and save it.
 
@@ -136,7 +139,7 @@ def permute_pretrained(
     arch = ArchInfo.from_hf_config(lm.config)
     blocks = TokenBlocks(calib_tokens, seq_len)
     batches = list(blocks.sequential(batch_size, max_batches=n_batches))
-    importance = collect_importance(lm, arch, batches)
+    importance = collect_importance(lm, arch, batches, method=importance_method, skip_first_token=skip_first_token)
     perm = permutation_from_importance(importance)
     diff = verify_permutation_equivalence(lm, arch, perm, batches[0], atol=atol, rtol=rtol)
 
@@ -199,6 +202,8 @@ def _run_training(cfg: dict, ctx: DistContext) -> dict:
     configs = build_configs(ctrl.arch, cfg.get("elastic", {}))
     tcfg = TrainConfig(**cfg.get("train", {}))
     tcfg.validate()
+    seq_len = cfg["data"]["seq_len"]
+    cost_fn = make_cost_fn(tcfg.cost_axis, ctrl.arch, configs, seq_len)  # fails here, before any training, if unusable
 
     train_blocks = TokenBlocks(cfg["data"]["train_tokens"], cfg["data"]["seq_len"])
     batch_size = cfg["data"]["batch_size"]
@@ -206,6 +211,8 @@ def _run_training(cfg: dict, ctx: DistContext) -> dict:
 
     if ctx.is_main:
         (out / "configs.json").write_text(json.dumps([asdict(c) for c in configs], indent=2))
+        (out / "costs.json").write_text(json.dumps(
+            {"axis": tcfg.cost_axis, "seq_len": seq_len, "cost": {c.name: cost_fn(c) for c in configs}}, indent=2))
         (out / "experiment.json").write_text(
             json.dumps({**cfg, "world_size": ctx.world_size, "global_batch_sequences":
                         ctx.world_size * batch_size * tcfg.grad_accum}, indent=2, default=str)
@@ -248,6 +255,10 @@ def _run_training(cfg: dict, ctx: DistContext) -> dict:
                     lm, ctrl, configs, lambda blocks=blocks: blocks.sequential(batch_size, max_batches=eval_batches),
                     autocast_bf16=tcfg.autocast_bf16,
                 )
+            by_name = {c.name: c for c in configs}
+            for rows in all_rows.values():
+                for row in rows:
+                    row["cost"], row["cost_axis"] = cost_fn(by_name[row["config"]]), tcfg.cost_axis
             payload = all_rows["val"] if isinstance(val, (str, Path)) else all_rows
             (out / "eval.json").write_text(json.dumps(payload, indent=2))
             result["eval"] = payload
