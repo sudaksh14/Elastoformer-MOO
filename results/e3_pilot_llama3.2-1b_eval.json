@@ -1,0 +1,140 @@
+{
+  "wikitext2": [
+    {
+      "config": "f025",
+      "kv_groups": 2,
+      "mlp_width": 2048,
+      "active_parameters": 506005504,
+      "nll": 3.944873708486557,
+      "perplexity": 51.669812241247385,
+      "tokens": 81840,
+      "cost": 243269632.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f050",
+      "kv_groups": 4,
+      "mlp_width": 4096,
+      "active_parameters": 749275136,
+      "nll": 3.3778030931949616,
+      "perplexity": 29.306317092023793,
+      "tokens": 81840,
+      "cost": 486539264.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f075",
+      "kv_groups": 6,
+      "mlp_width": 6144,
+      "active_parameters": 992544768,
+      "nll": 2.9594784677028656,
+      "perplexity": 19.28790986399184,
+      "tokens": 81840,
+      "cost": 729808896.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f100",
+      "kv_groups": 8,
+      "mlp_width": 8192,
+      "active_parameters": 1235814400,
+      "nll": 2.5631774812936783,
+      "perplexity": 12.976986004813762,
+      "tokens": 81840,
+      "cost": 973078528.0,
+      "cost_axis": "params"
+    }
+  ],
+  "c4": [
+    {
+      "config": "f025",
+      "kv_groups": 2,
+      "mlp_width": 2048,
+      "active_parameters": 506005504,
+      "nll": 3.924094927310944,
+      "perplexity": 50.60725408141426,
+      "tokens": 81840,
+      "cost": 243269632.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f050",
+      "kv_groups": 4,
+      "mlp_width": 4096,
+      "active_parameters": 749275136,
+      "nll": 3.506309449672699,
+      "perplexity": 33.325052773775944,
+      "tokens": 81840,
+      "cost": 486539264.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f075",
+      "kv_groups": 6,
+      "mlp_width": 6144,
+      "active_parameters": 992544768,
+      "nll": 3.174860394001007,
+      "perplexity": 23.923479773938723,
+      "tokens": 81840,
+      "cost": 729808896.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f100",
+      "kv_groups": 8,
+      "mlp_width": 8192,
+      "active_parameters": 1235814400,
+      "nll": 2.9077904641628267,
+      "perplexity": 18.316283339135413,
+      "tokens": 81840,
+      "cost": 973078528.0,
+      "cost_axis": "params"
+    }
+  ],
+  "fineweb": [
+    {
+      "config": "f025",
+      "kv_groups": 2,
+      "mlp_width": 2048,
+      "active_parameters": 506005504,
+      "nll": 3.5168125092983247,
+      "perplexity": 33.67691235658687,
+      "tokens": 81840,
+      "cost": 243269632.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f050",
+      "kv_groups": 4,
+      "mlp_width": 4096,
+      "active_parameters": 749275136,
+      "nll": 3.1420029163360597,
+      "perplexity": 23.15018834462452,
+      "tokens": 81840,
+      "cost": 486539264.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f075",
+      "kv_groups": 6,
+      "mlp_width": 6144,
+      "active_parameters": 992544768,
+      "nll": 2.8609716653823853,
+      "perplexity": 17.478501943505595,
+      "tokens": 81840,
+      "cost": 729808896.0,
+      "cost_axis": "params"
+    },
+    {
+      "config": "f100",
+      "kv_groups": 8,
+      "mlp_width": 8192,
+      "active_parameters": 1235814400,
+      "nll": 2.650801253318787,
+      "perplexity": 14.165384160523487,
+      "tokens": 81840,
+      "cost": 973078528.0,
+      "cost_axis": "params"
+    }
+  ]
+}

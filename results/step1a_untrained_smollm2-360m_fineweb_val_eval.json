@@ -1,0 +1,38 @@
+[
+  {
+    "config": "f025",
+    "kv_groups": 1,
+    "mlp_width": 768,
+    "active_parameters": 133755840,
+    "nll": 8.468067634105683,
+    "perplexity": 4760.307919508904,
+    "tokens": 327360
+  },
+  {
+    "config": "f050",
+    "kv_groups": 3,
+    "mlp_width": 1280,
+    "active_parameters": 212399040,
+    "nll": 5.635787332057953,
+    "perplexity": 280.27950350000896,
+    "tokens": 327360
+  },
+  {
+    "config": "f075",
+    "kv_groups": 4,
+    "mlp_width": 2048,
+    "active_parameters": 298906560,
+    "nll": 3.617377203702927,
+    "perplexity": 37.239767298917855,
+    "tokens": 327360
+  },
+  {
+    "config": "f100",
+    "kv_groups": 5,
+    "mlp_width": 2560,
+    "active_parameters": 361821120,
+    "nll": 2.619183886051178,
+    "perplexity": 13.7245182425031,
+    "tokens": 327360
+  }
+]

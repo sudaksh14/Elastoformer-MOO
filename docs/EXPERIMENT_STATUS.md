@@ -13,10 +13,10 @@ Hardware where run: DAS-6 `node205` (NVIDIA A40) unless stated. The Jetson Orin 
 | E0 | Model facts from the hub | `scripts/check_models.py` | **DONE** (18 of 24 matched; Llama 3.2 and Gemma gated; SmolLM3 unrecognized by transformers 4.51.1) | `results/e0_model_facts_2026-10-13.json` |
 | E1 | Quality per config, no training, original order vs importance-ordered | `scripts/run_e1_e2.py` | **DONE for SmolLM2-360M** (WikiText-2 and C4 validation, bf16, flash attention) | `results/e1e2_smollm2-360m_flash_attention_2.{json,md}` |
 | E2 | Permutation equivalence | same | **DONE for SmolLM2-360M**: max fp32 logit change 5.1e-4 (logits near 30), within tolerance | same |
-| E3 | Joint nested training with distillation vs naive recipe | `configs/experiments/smollm2-360m_nested.yaml`, `NPROC=2 run_experiments.sh train` | **PILOT DONE** (50M tokens, job 27783); the 500M-token main run is not started | `results/e3_pilot_smollm2-360m_{eval.json,metrics.jsonl}`, table below |
+| E3 | Joint nested training with distillation vs naive recipe | `configs/experiments/smollm2-360m_nested.yaml`, `NPROC=2 run_experiments.sh train` | **DONE for SmolLM2-360M**: pilot (50M, job 27783) and main run (500M, job 27801) | `results/e3_*_eval.json`, tables below |
 | E4 | Ablations: distillation, sandwich, ordering | same, `--set` overrides | NOT STARTED | none |
 | E5 | Llama-3.2-1B, then 3B, Qwen and SmolLM series | `MODEL=... run_experiments.sh` | NOT STARTED; Llama needs `HF_TOKEN` | none |
-| E6 | Monotonicity penalty and configuration weights | `--set train.mono_weight=0.5` | NOT STARTED (penalty implemented; hypervolume weights not) | none |
+| E6 | Monotonicity penalty and configuration weights | `--set train.mono_weight=0.5`; `train.weight_mode=fixed|hv`, `train.max_weight` | weights IMPLEMENTED and tested on CPU; comparison runs queued (27863-27865), no result yet | none |
 | E7 | Gradient-conflict measurement | none | NOT STARTED, no code | none |
 | E8 | Post-training quantization per configuration | none | NOT STARTED, no code | none |
 | E9 | Jetson Orin Nano: TTFT, tok/s, memory, energy | none | NOT STARTED, no code | none |
@@ -146,6 +146,26 @@ Everything except the peak learning rate is the pilot's recipe. WikiText-2 perpl
   loss weights would address.
 - 50M tokens only: the small-configuration gap may narrow with more tokens, and this has not been tested.
 
+### E3 main run (500M tokens, lr 5e-5, seed 0)
+
+Perplexity (`results/e3_main_smollm2-360m_500M_eval.json`); pilot = 50M tokens at lr 1e-4.
+
+| Config | WikiText-2 main / pilot | C4 val main / pilot | FineWeb-Edu val main / pilot | Untrained E2 start (WikiText-2, C4) |
+|---|---|---|---|---|
+| f025 | 52.7 / 91.3 | 52.9 / 81.0 | 41.8 / 66.9 | 4,489, 4,382 |
+| f050 | 31.0 / 41.1 | 33.6 / 41.4 | 26.2 / 33.2 | 406.5, 289.9 |
+| f075 | 18.9 / 21.0 | 23.2 / 24.9 | 17.7 / 19.3 | 45.6, 45.4 |
+| f100 (full) | 13.82 / 13.62 | 18.70 / 18.43 | 14.14 / 14.00 | 12.97, 17.96 |
+
+- Small configurations improved with 10x the tokens: f025 on WikiText-2 91 to 53, f050 41 to 31. Gaps to the full model are now 3.8x (f025),
+  2.2x (f050) and 1.37x (f075) on WikiText-2.
+- **The full model drifted further**: +6.5% on WikiText-2 and +4.1% on C4 over the untrained model, worse than the pilot (+5.0%, +2.6%) and
+  than the 50M-token runs at lr 3e-5 and 1e-5. More tokens at a lower peak rate did not remove the drift, so the drift is not only a
+  learning-rate effect at this scale.
+- Untested explanations, not results: the shared weights trade full-model quality for the small configurations; or a shift from the
+  pretraining distribution to FineWeb-Edu (the untrained model's FineWeb-Edu perplexity was never measured, so this cannot yet be separated).
+- One seed, one learning rate, one model.
+
 ## DAS-6 job log
 
 | Job | What | Partition | Node | Result |
@@ -171,12 +191,76 @@ Everything except the peak learning rate is the pilot's recipe. WikiText-2 perpl
 | 27797 | **E3 naive-recipe baseline**, 50M tokens: `train.sandwich=false kd_weight=0 teacher=none`, lr 1e-4 (one random config per step, no distillation), run `e3_naive_lr1e-4_50M` | defq | 205 (2x A40) | passed, results below |
 | 27798 | E3 recipe sweep, 50M tokens, lr 3e-5, run `e3_sandwich_lr3e-5_50M` | defq | 205 | passed, results below |
 | 27799 | E3 recipe sweep, 50M tokens, lr 1e-5, run `e3_sandwich_lr1e-5_50M` | defq | 205 | passed, results below |
-| 27801 | **E3 main run, 500M tokens**: 15,260 steps, lr 5e-5 (midpoint of the lr sweep; authors' choice), 300 warm-up steps, cosine to 10%, save every 500, run `e3_main_smollm2-360m_500M`, 48 h limit, seed 0 | defq | 205 (2x A40) | submitted 2026-10-15; expected about 17 h |
+| 27850 | CPU tests with config weights, HV outer step, `DEPENDENCY` option | fatq | 201 | submitted 2026-10-19; gates the GPU jobs below |
+| 27853 to 27864 | first submission; cancelled before start (dependencies were not honoured), then re-queued as 27875 to 27878 (A10) and 27865 (A40) | | | superseded |
+| 27875, 27876 | step 1a (untrained full model, eval only, A10) and step 1b (full model only, CE only, 50M tokens, A10, batch 4 x 4) | defq | 207, 208 | passed |
+| 27877, 27878 | equal weights and fixed 3x weight, 50M tokens, lr 5e-5, seed 0 (A10, batch 4 x 4) | defq | 208 | passed |
+| 27866 to 27868 | Llama-3.2-1B: E1/E2 (publishes the permuted checkpoint), 30-step probe (36.5 GB peak), 1500-step 50M-token pilot at lr 1e-4 | defq | A40 | passed |
+| 27865 | HV-weighted run (first version; see the bug note below), 50M tokens, lr 5e-5 (A40) | defq | 205 | passed |
+| 27888 | CPU tests after the HV fixes and re-scoring script | fatq | 201 | passed, 278 tests |
+| 27889 | **HV rerun, fixed version** (cosine alignments, full-model floor 1.0, selection batches disjoint from evaluation), 50M tokens, lr 5e-5, seed 0 (A40 x2), run `e3_hvfix_lr5e-5_50M` | defq | 205 | queued behind 27888 |
+| 27890 to 27895 | re-scoring on all blocks of each evaluation file, one protocol: untrained model, full-only, equal, fixed 3x, pilot, first HV (excluding its selection blocks) | defq | 207 (A10, one at a time) | chained after 27888 |
+| 27851, 27852 | Llama-3.2-1B evaluation data (done) and 520M-token training data | fatq | 202, 203 | 27851 done; 27852 running |
+| 27861 | step 1a: untrained SmolLM2-360M full model on FineWeb-Edu val (and WikiText-2 cross-check), bf16, flash | defq | - | queued behind 27850 |
+| 27862 | step 1b: full model only, CE only, 50M tokens, lr 5e-5 (`e3_fullonly_ce_lr5e-5_50M`) | defq | - | queued behind 27850 |
+| 27863, 27864, 27865 | weighting comparison, 50M tokens, lr 5e-5, seed 0: equal weights, fixed `max_weight=3`, hypervolume-driven (`e3_w_{equal,fixed3,hv}_lr5e-5_50M`) | defq | - | queued behind 27850 |
+| 27866, 27867, 27868 | Llama-3.2-1B: E1/E2, 30-step probe (memory and speed), then 50M-token pilot with the SmolLM2 pilot recipe (lr 1e-4) | defq | - | queued; 27867 waits for 27866 and 27852, 27868 for 27867 |
+| 27801 | **E3 main run, 500M tokens**: 15,260 steps, lr 5e-5 (midpoint of the lr sweep; authors' choice), 300 warm-up steps, cosine to 10%, save every 500, run `e3_main_smollm2-360m_500M`, 48 h limit, seed 0 | defq | 205 (2x A40) | passed, 63,178 s (17.6 h), results below |
 | 27800 | CPU tests after the cost axis, Taylor importance and CPU nodes 201-203 | fatq | 201-203 | 266 passed |
 
 Logs: `/var/scratch/skalra/elastoformer_moo/logs/`. Run directories: `/var/scratch/skalra/elastoformer_moo/runs/`.
 Environment: `/var/scratch/skalra/prune_llm` (Python 3.10.18, torch 2.7.0+cu126) plus the `pylibs` overlay (transformers 4.51.1,
 flash-attn 2.8.3).
+
+### Step 1 controls, weighting arms and Llama pilot (2026-10-19, one seed)
+
+**Read this first, three evaluation caveats.** (1) The training-time evaluation reads only the first `eval_batches` batches of
+each file; the FineWeb-Edu validation file has 4,884 blocks and the reported numbers use 320 of them. (2) The A10 runs used a per-GPU
+batch of 4, and evaluation takes its batch size from the data config, so their evaluation covered 163,680 tokens instead of the
+303,831 (WikiText-2) or 327,360 (FineWeb-Edu) of the other runs. (3) The Llama pilot was evaluated on 81,840 tokens. Cross-run
+differences of a few percent are therefore not reliable until the re-scoring jobs (27890 to 27895) give one protocol for all runs.
+
+| Run (50M tokens, seed 0) | Hardware | WikiText-2, full model | Note |
+|---|---|---|---|
+| Untrained SmolLM2-360M (E2 start) | A40 | 12.97 (full file) | FineWeb-Edu untrained 13.72 (320 blocks) |
+| Full model only, CE only, lr 5e-5 (`fullonly`) | A10 | 13.83 (+6.6%) | 163,680 tokens |
+| Equal weights, lr 5e-5 | A10 | 13.26 (+2.2%) | 163,680 tokens |
+| Fixed 3x weight on full model, lr 5e-5 | A10 | 13.04 (+0.5%) | 163,680 tokens |
+| Pilot, lr 1e-4 | A40 | 13.62 (+5.0%) | full file |
+| HV-weighted, first version, lr 5e-5 | A40 | 13.68 (+5.5%) | full file; see bug note |
+
+- **What the controls say.** Training the full model alone, with no small configurations and no distillation, still raises its
+  WikiText-2 perplexity (+6.6% on the subset). So sharing weights with the small configurations is not the main cause of the drift;
+  the learning rate and the training distribution are the likely causes. On FineWeb-Edu the same model went from 13.72 untrained to
+  13.02 after training, which fits a shift toward the training domain. The subsets differ, so this is suggestive only.
+- **Fixed 3x weight versus equal weights (same subset):** the 3x weight reduces the full-model drift from +2.2% to +0.5% and costs
+  the smallest configuration about 10% (f025 130 to 143). That is the trade-off the weighting was meant to buy.
+- **Scale check, Llama-3.2-1B pilot (lr 1e-4, the same recipe as the SmolLM pilot):** the small configurations recover well
+  (WikiText-2 perplexity of f025, f050, f075 is 51.7, 29.3, 19.3 against starting points of 3,673, 690, 53). But the full model drifts
+  more than SmolLM2 at the same learning rate: 10.99 to 12.98 (+18%) on WikiText-2 and 14.7 to 18.3 (+25%) on C4. The learning rate is
+  the likely cause. Memory: peak 36.5 GB per GPU at batch 2 times accumulation 8, which fits an A40 (45 GB) and not an A10 (22 GB).
+
+### Hypervolume weighting: bug found and fixed (2026-10-20)
+
+Two faults in the first version, both corrected in the code:
+
+1. **Selection leaked into the evaluation.** The outer step selected weights on the first two blocks of the FineWeb-Edu file, which
+   the reported FineWeb-Edu evaluation also reads. The selection batches now come from the end of the file (`TokenBlocks.tail`), and
+   the training code refuses a file too small to hold both. `hv_val_set` names the file.
+2. **Raw dot products let the smallest configuration dominate.** In the first run the weights moved to the smallest configuration
+   (f025 reached 3.5 by step 1400) and the full model's weight sat at its 0.25 floor. The cause: the training loss and gradient norm
+   are largest for the smallest configuration (CE 6.4 against 2.6 for the full model at step 50), so its raw alignments were about
+   10x those of the full model. The alignments are now cosines, and the full model's weight never drops below `hv_full_min` = 1.0.
+
+Job 27889 reruns the weighting with these fixes on two A40s (`e3_hvfix_lr5e-5_50M`). The first-version result above is kept for the
+record only.
+
+### Re-scoring protocol (jobs 27890 to 27895)
+
+`scripts/rescore.py` (stage `rescore` in `run_experiments.sh`) evaluates every block of each evaluation file with the same settings
+for every run: fp32 weights, bf16 autocast, flash attention, batch 8, all four configurations. For a hypervolume-weighted run the
+last `hv_val_batches * batch_size` blocks of the selection file are excluded. The untrained model is scored the same way, so each
+gap is measured against a common baseline.
 
 ## Smoke checks on real checkpoints (2026-10-13, CPU, laptop)
 

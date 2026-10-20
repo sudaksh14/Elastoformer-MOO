@@ -1,0 +1,41 @@
+{
+  "wikitext2": [
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.6266559243202208,
+      "perplexity": 13.82745245330381,
+      "tokens": 163680,
+      "cost": 314572800.0,
+      "cost_axis": "params"
+    }
+  ],
+  "c4": [
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.8632459223270414,
+      "perplexity": 17.518297783763018,
+      "tokens": 163680,
+      "cost": 314572800.0,
+      "cost_axis": "params"
+    }
+  ],
+  "fineweb": [
+    {
+      "config": "f100",
+      "kv_groups": 5,
+      "mlp_width": 2560,
+      "active_parameters": 361821120,
+      "nll": 2.566657680273056,
+      "perplexity": 13.022227176740692,
+      "tokens": 163680,
+      "cost": 314572800.0,
+      "cost_axis": "params"
+    }
+  ]
+}

@@ -239,3 +239,9 @@ def test_stage_data_failure_falls_back_instead_of_aborting(tmp_path):
     blocker.write_text("x")  # a path whose parent is a file cannot be created
     unwritable = run(["-c", f'source scripts/lib.sh; stage_data "{src.as_posix()}" "{(blocker / "sub").as_posix()}" a.bin'])
     assert unwritable.returncode == 1 and "cannot create" in unwritable.stderr
+
+
+def test_dependency_option_is_passed_to_sbatch_and_absent_by_default():
+    assert "--dependency" not in submit("gpu").stdout
+    line = next(l for l in submit("gpu", {"DEPENDENCY": "afterok:1:2"}).stdout.splitlines() if "--dependency" in l)
+    assert "--dependency=afterok:1:2" in line

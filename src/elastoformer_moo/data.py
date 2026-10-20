@@ -89,6 +89,18 @@ class TokenBlocks:
             yield torch.stack([self.block(i) for i in idx])
             produced += 1
 
+    def tail(self, batch_size: int, max_batches: int) -> Iterator[torch.Tensor]:
+        """The last ``max_batches * batch_size`` blocks, in file order: disjoint from ``sequential()`` at the start.
+
+        Used for data that must not overlap the evaluation set (the hypervolume outer step selects weights on it).
+        """
+        n_blocks = len(self)
+        if max_batches * batch_size > n_blocks:
+            raise ValueError(f"file has {n_blocks} blocks; {max_batches} batches of {batch_size} do not fit")
+        first = n_blocks - max_batches * batch_size
+        for start in range(first, n_blocks, batch_size):
+            yield torch.stack([self.block(i) for i in range(start, start + batch_size)])
+
     def epoch_stream(
         self, batch_size: int, seed: int = 0, rank: int = 0, world: int = 1, skip_batches: int = 0
     ) -> Iterator[torch.Tensor]:

@@ -58,6 +58,12 @@ case "$stage" in
     log "E1/E2 for $MODEL, attention=${ATTN:-flash_attention_2}, run=$RUN_DIR"
     python scripts/run_e1_e2.py --model "$MODEL" --data-dir "$SCRATCH_ROOT/data/$MODEL" --out "$RUN_DIR" \
       --attn "${ATTN:-flash_attention_2}" --device cuda "$@"
+    # the training stage reads the importance-ordered checkpoint from $PERMUTED: publish it once, never overwrite
+    if [[ ! -d "$PERMUTED" && -d "$RUN_DIR/permuted" ]]; then
+      mkdir -p "$(dirname "$PERMUTED")"
+      cp -r "$RUN_DIR/permuted" "$PERMUTED"
+      log "published the importance-ordered checkpoint to $PERMUTED"
+    fi
     ;;
   bench)
     require_node_class gpu; ensure_scratch; activate_env gpu
@@ -68,10 +74,10 @@ case "$stage" in
     ;;
   permute)
     require_node_class gpu; ensure_scratch; activate_env gpu
-    [[ -f "$SCRATCH_ROOT/data/calib.bin" ]] || die "missing $SCRATCH_ROOT/data/calib.bin (see scripts/prepare_tokens.py)" 5
+    CALIB="$SCRATCH_ROOT/data/$MODEL/calib.bin"; [[ -f "$CALIB" ]] || CALIB="$SCRATCH_ROOT/data/calib.bin"
+    [[ -f "$CALIB" ]] || die "missing $SCRATCH_ROOT/data/$MODEL/calib.bin (run: MODEL=$MODEL ./run_experiments.sh data)" 5
     [[ ! -e "$PERMUTED" ]] || die "$PERMUTED already exists; remove it or choose another MODEL" 5
-    python scripts/permute_model.py --model "$MODEL" --calib "$SCRATCH_ROOT/data/calib.bin" \
-      --out "$PERMUTED" --device cuda
+    python scripts/permute_model.py --model "$MODEL" --calib "$CALIB" --out "$PERMUTED" --device cuda "$@"
     ;;
   train)
     require_node_class gpu; ensure_scratch; activate_env gpu
@@ -114,11 +120,26 @@ case "$stage" in
     export NCCL_DEBUG="${NCCL_DEBUG:-WARN}"
     python -m torch.distributed.run --standalone --nproc_per_node="${NPROC:-2}" scripts/dist_smoke.py
     ;;
+  rescore)
+    # Re-score a checkpoint on every block of the evaluation files (one protocol for all runs). MODEL_DIR is a run's
+    # final/ directory or the permuted model; RUN_DIR (optional) gives the run's train_config.json (HV exclusion).
+    require_node_class gpu; ensure_scratch; activate_env gpu
+    [[ -n "${MODEL_DIR:-}" ]] || die "set MODEL_DIR to a checkpoint directory" 2
+    OUT="${OUT:-${RUN_DIR:-$SCRATCH_ROOT/runs/rescore}/eval_full.json}"
+    rescore_args=(--model "$MODEL_DIR" --data-dir "$SCRATCH_ROOT/data/$MODEL" --out "$OUT")
+    [[ -n "${RUN_DIR:-}" ]] && rescore_args+=(--run-dir "$RUN_DIR")
+    python scripts/rescore.py "${rescore_args[@]}" "$@"
+    ;;
   eval)
     require_node_class gpu; ensure_scratch; activate_env gpu
-    model_dir="$PERMUTED"; [[ -d "$model_dir" ]] || model_dir="$MODEL"
-    python scripts/eval_ppl.py --model "$model_dir" --tokens "$SCRATCH_ROOT/data/val.bin" \
-      --device cuda --out "$SCRATCH_ROOT/runs/eval_${MODEL}_$(date +%Y%m%d_%H%M%S).json"
+    # TOKENS: space-separated token files (default $SCRATCH_ROOT/data/val.bin); extra arguments go to eval_ppl.py.
+    # CKPT overrides the model (default: the importance-ordered checkpoint if present, else the registry model).
+    model_dir="${CKPT:-$PERMUTED}"; [[ -d "$model_dir" || -n "${CKPT:-}" ]] || model_dir="$MODEL"
+    for tokens in ${TOKENS:-$SCRATCH_ROOT/data/val.bin}; do
+      tag="$(basename "$tokens" .bin)"
+      python scripts/eval_ppl.py --model "$model_dir" --tokens "$tokens" --device cuda \
+        --out "$SCRATCH_ROOT/runs/eval_${MODEL}_${tag}_$(date +%Y%m%d_%H%M%S).json" "$@"
+    done
     ;;
-  *) die "unknown stage '$stage' (download|data|train-data|e1e2|bench|distsmoke|check-models|permute|train|eval)" 2 ;;
+  *) die "unknown stage '$stage' (download|data|train-data|e1e2|bench|distsmoke|check-models|permute|train|rescore|eval)" 2 ;;
 esac

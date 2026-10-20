@@ -25,7 +25,7 @@ Written for: the authors and the implementing engineer.
 | R2 | One-time importance ordering applied consistently to q/k/v/o and gate/up/down, with a logit-equivalence check | `importance.py`, `permute.py` | TESTED |
 | R3 | Joint nested training: sandwich sampling, distillation from a frozen full model, no frozen shared weights | `losses.py`, `sampling.py`, `train.py`, `pipeline.py` | TESTED on tiny models (CPU); never run at scale; GPU path IMPLEMENTED, not run |
 | R4a | Monotonicity penalty | `losses.py`, `train.py` | TESTED |
-| R4b | Hypervolume-driven configuration weights | `cost.py` (selectable cost axis `train.cost_axis`: params, flops, kv_cache, `table:<json>` of measured latency/energy; `hypervolume_2d`) | cost axis DONE, the weight learning NOT STARTED |
+| R4b | Hypervolume-driven configuration weights | `cost.py` (selectable cost axis `train.cost_axis`: params, flops, kv_cache, `table:<json>`; `hypervolume_2d`, `hv_widths`), `weights.py` (cosine alignments, full-model floor, disjoint selection batches) | cost axis DONE; first version tested on DAS-6 and collapsed to the smallest configuration (bug, fixed); fixed rerun queued (job 27889), no result yet |
 | R4c | Gradient-conflict measurement (E7) | none | NOT STARTED |
 | R4d | Per-configuration low-rank deltas (E12) | none | NOT STARTED |
 | R5 | Post-training quantization per configuration (8-bit, 4-bit) | none | NOT STARTED |

@@ -22,6 +22,7 @@ from .data import TokenBlocks
 from .distributed import DistContext, barrier, device_for, init_distributed, shutdown
 from .evaluate import evaluate_configs
 from .cost import make_cost_fn
+from .weights import ConfigWeights
 from .importance import collect_importance
 from .nested import make_elastic
 from .permute import permutation_from_importance, verify_permutation_equivalence
@@ -231,9 +232,25 @@ def _run_training(cfg: dict, ctx: DistContext) -> dict:
             )
         return train_blocks.random(batch_size, seed + 1_000_003 * ctx.rank)  # with replacement
 
+    weights = ConfigWeights(configs, ctrl.arch, tcfg.weight_mode, tcfg.max_weight, tcfg.hv_w_min, tcfg.hv_w_max,
+                            tcfg.hv_beta, tcfg.hv_ema, tcfg.hv_full_min)
+    hv_batches = None
+    if tcfg.weight_mode == "hv":
+        # The outer step selects weights on held-out data (hv_val_set, default 'fineweb'). It is taken from the END
+        # of that file, while the reported evaluation reads the START, so the two never overlap.
+        val_cfg = cfg["data"]["val_tokens"]
+        hv_name = tcfg.hv_val_set
+        hv_path = val_cfg[hv_name] if isinstance(val_cfg, dict) else val_cfg
+        hv_blocks = TokenBlocks(hv_path, cfg["data"]["seq_len"])
+        eval_blocks = cfg["data"].get("eval_batches", 16) * batch_size  # the reported evaluation reads this prefix
+        if len(hv_blocks) < eval_blocks + tcfg.hv_val_batches * batch_size:
+            raise ValueError(f"{hv_path} has {len(hv_blocks)} blocks: too few for evaluation ({eval_blocks}) and HV selection")
+        hv_cache = list(hv_blocks.tail(batch_size, tcfg.hv_val_batches))
+        hv_batches = lambda: hv_cache  # noqa: E731  (the same fixed batches at every outer step)
     history = train(
         lm, ctrl, configs, make_batches, tcfg, out,
         teacher=teacher, resume=bool(cfg.get("resume", False)), dist_ctx=ctx,
+        weights=weights, hv_val_batches=hv_batches, cost_fn=cost_fn,
     )
     if ctx.is_main:
         lm.save_pretrained(out / "final")

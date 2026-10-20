@@ -61,3 +61,30 @@ def hypervolume_2d(points: Sequence[tuple[float, float]], reference: tuple[float
         next_cost = useful[i + 1][0] if i + 1 < len(useful) else ref_cost
         area += (next_cost - cost) * (ref_loss - best_loss)
     return area
+
+
+def hv_widths(costs: Sequence[float], losses: Sequence[float], ref_scale: float = 1.25) -> list[float]:
+    """Sensitivity of the hypervolume to each configuration's loss: ``d HV / d(-loss_i)``.
+
+    The hypervolume of points ``(cost_i, loss_i)`` (both minimised) against a reference whose cost is
+    ``ref_scale * max(cost)`` is a staircase. Lowering the loss of a non-dominated point by ``d`` adds
+    ``d * width`` of area, where ``width`` is the cost distance to the next non-dominated point (or to the
+    reference for the last one). A dominated point (a configuration that is worse than a cheaper one) has
+    sensitivity 0. The reference loss does not enter the derivative.
+    """
+    if len(costs) != len(losses) or not costs:
+        raise ValueError("costs and losses must be non-empty and of equal length")
+    if ref_scale <= 1.0:
+        raise ValueError("ref_scale must exceed 1 so the most expensive point lies inside the reference")
+    order = sorted(range(len(costs)), key=lambda i: (costs[i], losses[i]))
+    nondominated, best = [], float("inf")
+    for i in order:
+        if losses[i] < best:
+            nondominated.append(i)
+            best = losses[i]
+    reference = ref_scale * max(costs)
+    widths = [0.0] * len(costs)
+    for k, i in enumerate(nondominated):
+        upper = costs[nondominated[k + 1]] if k + 1 < len(nondominated) else reference
+        widths[i] = upper - costs[i]
+    return widths

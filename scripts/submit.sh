@@ -13,6 +13,7 @@
 #   GPU_GRES       gres string for GPU jobs (default gpu:1; `gpu:A40:1` selects an A40, see `sinfo -o %G`)
 #   PARTITION      sbatch partition (defaults: gpu -> defq, cpu -> fatq)
 #   ALL_NODES      space-separated node names; overrides `sinfo` (used for dry runs and tests)
+#   DEPENDENCY     sbatch --dependency value, e.g. afterok:27850:27851 (the job waits for those jobs to succeed)
 #   DRY_RUN=1      print the sbatch command and exit without submitting
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
@@ -48,6 +49,7 @@ default_partition=fatq; [[ "$kind" == gpu ]] && default_partition=defq
 args=(--exclude="$exclude" --time="${TIME_LIMIT:-$default_time}" --partition="${PARTITION:-$default_partition}"
       --output="$SCRATCH_ROOT/logs/%x_%j.out" --export="ALL,ELASTOFORMER_ROOT=$ELASTOFORMER_ROOT,SCRATCH_ROOT=$SCRATCH_ROOT")
 [[ "$kind" == gpu ]] && args+=(--gres="${GPU_GRES:-gpu:1}")
+[[ -n "${DEPENDENCY:-}" ]] && args+=(--dependency="$DEPENDENCY")
 
 cmd=(sbatch "${args[@]}" "$script" "$@")
 log "kind=$kind  excluded ${exclude//[^,]/} (comma count)  command:"
