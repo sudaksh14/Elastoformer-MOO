@@ -262,6 +262,29 @@ for every run: fp32 weights, bf16 autocast, flash attention, batch 8, all four c
 last `hv_val_batches * batch_size` blocks of the selection file are excluded. The untrained model is scored the same way, so each
 gap is measured against a common baseline.
 
+### Full-file re-scoring of the 50M-token runs (jobs 27890 to 27895, 2026-10-21, one seed)
+
+All blocks of each file (WikiText-2 297 blocks, C4 256, FineWeb-Edu 4,882; the old HV run excludes its 16 selection blocks),
+same settings for every run. Full model (f100) perplexity; change against the untrained model in brackets.
+
+| Run | WikiText-2 | C4 | FineWeb-Edu |
+|---|---|---|---|
+| Untrained (permuted) | 12.96 | 17.95 | 13.50 |
+| Full model only, CE only, lr 5e-5 | 14.16 (+9.3%) | 17.91 (-0.2%) | 13.34 (-1.2%) |
+| Equal weights, lr 5e-5 | 13.53 (+4.4%) | 18.33 (+2.1%) | 13.68 (+1.3%) |
+| Fixed 3x weight on full model, lr 5e-5 | 13.32 (+2.8%) | 18.10 (+0.8%) | 13.52 (+0.1%) |
+| Pilot (lr 1e-4) | 13.62 (+5.1%) | 18.43 (+2.7%) | 13.75 (+1.9%) |
+| HV first version (excl. selection blocks) | 13.68 (+5.6%) | 18.53 (+3.2%) | 13.82 (+2.4%) |
+| HV fixed version, job 27889 (training-time eval, not re-scored) | 13.46 (+3.9%) | 18.25 (+1.7%) | not available |
+
+Small configurations, WikiText-2 (f025 / f050 / f075): equal 131 / 48 / 22.1; fixed 3x 143 / 51 / 22.8; HV fixed 150 / 46 / 22.5.
+
+- The full-model drift on WikiText-2 is not caused by sharing weights with the small configurations: full-only training drifts most (+9.3%).
+- On FineWeb-Edu (the training distribution) sharing does cost the full model: full-only 13.34, equal 13.68, fixed 3x 13.52.
+- Fixed 3x weight beats equal weights on the full model on all three sets, at about 10% cost on the smallest configuration.
+- HV did not beat fixed 3x. Its weights drifted toward the smallest configuration (f025 at the 0.25 floor, f050 at 2.3 by step 1,400), and the cosine alignments fell to about 0.02 to 0.04 late in training.
+- One seed, so differences of about 1 to 2% may be within seed noise. The HV fixed run still needs re-scoring for FineWeb-Edu.
+
 ## Smoke checks on real checkpoints (2026-10-13, CPU, laptop)
 
 `scripts/check_real_model.py`, about 6k held-out tokens of this repository's own text, same text for calibration and evaluation.

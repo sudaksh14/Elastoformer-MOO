@@ -1,0 +1,143 @@
+{
+  "model": "/var/scratch/skalra/elastoformer_moo/models/smollm2-360m-permuted",
+  "run_dir": null,
+  "protocol": {
+    "seq_len": 1024,
+    "batch_size": 8,
+    "attn": "flash_attention_2",
+    "autocast_bf16": true,
+    "all_blocks": true,
+    "excluded": {
+      "set": null,
+      "blocks": 0
+    }
+  },
+  "sets": {
+    "wikitext2": {
+      "blocks": 297,
+      "tokens": 303831,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 8.405678681652955,
+          "perplexity": 4472.392063195398,
+          "tokens": 303831
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 6.008119493221193,
+          "perplexity": 406.71776516926076,
+          "tokens": 303831
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.8188655561068243,
+          "perplexity": 45.55250223958542,
+          "tokens": 303831
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.562037307405311,
+          "perplexity": 12.96219841603465,
+          "tokens": 303831
+        }
+      ]
+    },
+    "c4": {
+      "blocks": 256,
+      "tokens": 261888,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 8.37375494837761,
+          "perplexity": 4331.871515897558,
+          "tokens": 261888
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 5.668608829379082,
+          "perplexity": 289.631327398328,
+          "tokens": 261888
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.8157614544034004,
+          "perplexity": 45.41132187225897,
+          "tokens": 261888
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.8877377584576607,
+          "perplexity": 17.952650396896694,
+          "tokens": 261888
+        }
+      ]
+    },
+    "fineweb": {
+      "blocks": 4882,
+      "tokens": 4994286,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 8.459728203069865,
+          "perplexity": 4720.774731168486,
+          "tokens": 4994286
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 5.6159617940894115,
+          "perplexity": 274.77753155067956,
+          "tokens": 4994286
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.578856553175761,
+          "perplexity": 35.8325448035716,
+          "tokens": 4994286
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.60243649738629,
+          "perplexity": 13.496582393882518,
+          "tokens": 4994286
+        }
+      ]
+    }
+  }
+}

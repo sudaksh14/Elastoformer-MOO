@@ -1,0 +1,143 @@
+{
+  "model": "/var/scratch/skalra/elastoformer_moo/runs/e3_w_hv_lr5e-5_50M/final",
+  "run_dir": "/var/scratch/skalra/elastoformer_moo/runs/e3_w_hv_lr5e-5_50M",
+  "protocol": {
+    "seq_len": 1024,
+    "batch_size": 8,
+    "attn": "flash_attention_2",
+    "autocast_bf16": true,
+    "all_blocks": true,
+    "excluded": {
+      "set": "fineweb",
+      "blocks": 16
+    }
+  },
+  "sets": {
+    "wikitext2": {
+      "blocks": 297,
+      "tokens": 303831,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 4.806865977919864,
+          "perplexity": 122.34757602962722,
+          "tokens": 303831
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 3.936359241755322,
+          "perplexity": 51.2317389706032,
+          "tokens": 303831
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.1312645292442656,
+          "perplexity": 22.902922654353926,
+          "tokens": 303831
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.6159372233381175,
+          "perplexity": 13.68003161648253,
+          "tokens": 303831
+        }
+      ]
+    },
+    "c4": {
+      "blocks": 256,
+      "tokens": 261888,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 4.587976574897766,
+          "perplexity": 98.29533555396874,
+          "tokens": 261888
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 3.8724270388484,
+          "perplexity": 48.0588854313604,
+          "tokens": 261888
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.2762417420744896,
+          "perplexity": 26.47608154138199,
+          "tokens": 261888
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.9196029379963875,
+          "perplexity": 18.533926880398443,
+          "tokens": 261888
+        }
+      ]
+    },
+    "fineweb": {
+      "blocks": 4866,
+      "tokens": 4977918,
+      "rows": [
+        {
+          "config": "f025",
+          "kv_groups": 1,
+          "mlp_width": 768,
+          "active_parameters": 133755840,
+          "nll": 4.3188061386873535,
+          "perplexity": 75.09891705959463,
+          "tokens": 4977918
+        },
+        {
+          "config": "f050",
+          "kv_groups": 3,
+          "mlp_width": 1280,
+          "active_parameters": 212399040,
+          "nll": 3.6027299653244174,
+          "perplexity": 36.69828285685752,
+          "tokens": 4977918
+        },
+        {
+          "config": "f075",
+          "kv_groups": 4,
+          "mlp_width": 2048,
+          "active_parameters": 298906560,
+          "nll": 3.001517756015638,
+          "perplexity": 20.116045013742642,
+          "tokens": 4977918
+        },
+        {
+          "config": "f100",
+          "kv_groups": 5,
+          "mlp_width": 2560,
+          "active_parameters": 361821120,
+          "nll": 2.626252525880706,
+          "perplexity": 13.821875605483164,
+          "tokens": 4977918
+        }
+      ]
+    }
+  }
+}
